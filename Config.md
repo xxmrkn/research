@@ -19,7 +19,6 @@
 | best valid loss | 1.1983 | 0.5554 | 0.5132 |
 | leader board (private)[^1] | 0.31705 (0.32631) | 0.65960 (0.66038) | 0.67843 (0.68653) |
 | training time | 320m 18s | 355m 1s | 358m 9s |
-[^1]:The private leaderboard is calculated with approximately 81% of the test data.
 ---
 ># Configuration -pretrained-
 ### [ parameter ]
@@ -42,3 +41,4 @@
 | best valid loss | 1.1983 | 0.5554 | 0.5132 |
 | leader board | 0.25752 | 0.42800 | 0.43018 |
 | training time | 320m 18s | 355m 1s | 358m 9s |
+[^1]:The private leaderboard is calculated with approximately 81% of the test data.
