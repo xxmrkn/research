@@ -39,6 +39,6 @@
 | best valid accuracy | 0.8312 | 0.8568 | 0.8611 |
 | best valid f1-score | 0.6605 | 0.6708 | 0.6798 |
 | best valid loss | 0.5562 | 0.4989 | 0.4433 |
-| leader board (private)[^1] | 0.65804 (0.65804) | 0.73314 (0.73534) | 0.72685 (0.73933) |
+| leader board (private)[^1] | 0.66773 (0.65804) | 0.73314 (0.73534) | 0.72685 (0.73933) |
 | training time | 325m 14s | 346m 46s | 379m 59s |
 [^1]:The private leaderboard is calculated with approximately 81% of the test data.
