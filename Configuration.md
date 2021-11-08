@@ -46,7 +46,7 @@
 ># Experiment -optimizer SGD momentum train1Epoch-
 ### [ parameter ]
 | model architechture | f1(lr = 1e-4) | f1 (lr = 1e-3) |
-| ---- | ---- | ---- | ---- |
+| ---- | ---- | ---- |
 | vit_base_patch16_224 | 0.6713 | 0.6429 |
 | resnet18d | 0.1160 | 0.4590 |
 | vgg11 | 0.5555 | 0.6348 |
@@ -54,7 +54,7 @@
 ># Experiment -optimizer Adam train1Epoch-
 ### [ parameter ]
 | model architechture | f1(lr = 1e-4) | f1 (lr = 1e-3) |
-| ---- | ---- | ---- | ---- |
+| ---- | ---- | ---- |
 | vit_base_patch16_224 | 0.6501 | 0.1447 |
 | resnet18d | 0.6319 | 0.6090 |
 | vgg11 | 0.6725 | 0.0874 |
