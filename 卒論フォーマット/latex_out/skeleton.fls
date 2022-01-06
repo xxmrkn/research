@@ -1,0 +1,8 @@
+PWD /Users/markun/git/research/å’è«–ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
+INPUT /usr/local/texlive/2021/texmf.cnf
+INPUT /usr/local/texlive/2021/texmf-dist/web2c/texmf.cnf
+INPUT /usr/local/texlive/2021/texmf.cnf
+INPUT /usr/local/texlive/2021/texmf-dist/web2c/texmf.cnf
+INPUT /usr/local/texlive/2021/texmf-var/web2c/eptex/platex.fmt
+INPUT /Users/markun/git/research/Â´ÏÀ¥Õ¥©¡¼¥Ş¥Ã¥È/skeleton.tex
+OUTPUT latex_out/skeleton.log
