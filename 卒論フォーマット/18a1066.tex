@@ -21,7 +21,7 @@
 
 \begin{document}
 \maketitle%%%%%%%%%%%%%%%%%%% タイトル %%%%
-　事前学習がVision Transformerに与える影響
+  事前学習がVision Transformerに与える影響
 
 \frontmatter% ここから前文
 \begin{abstract}%%%%%%%%%%%%% 概要 %%%%%%%%
@@ -35,18 +35,25 @@
 \chapter{序論}
 \section{背景}
 近年，画像認識分野では，機械翻訳で脚光を浴び
-ることになったTransformer\cite{dosovitskiy2021image}モデルをコンピュータ ビジョンに適応させた Vision Transformer というモ デルが登場した.
+ることになったTransformerモデル\cite{dosovitskiy2021image}をコンピュータビジョンに適応させたVision Transformerというモデルが登場した．
+Vision Transformerは，層を深くし畳み込みを行う畳み込みニューラルネットワークとは違い，畳み込み演算をAttention機構を用いて代用している．
 本研究では，Vision Transformerが提案された論文
-「An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale」を参考にし，事前学習や データ拡張の有無が，学習及び推論に与える影響を 検証した．
+「An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale」を参考にし，事前学習やデータ拡張の有無が，学習及び推論に与える影響を検証した．
 \section{本研究の目的}
-目的をここに書きます．
+本研究の目的を以下に示す．
+\begin{enumerate}
+  \item 一定の条件下での振る舞いを従来のモデル（ResNet，VGG）比較し，ViTの優れている点・そうではない点を明らかにする．
+  \item 事前学習やデータ拡張が各モデルに及ぼす影響を調べる．
+\end{enumerate}
+
 \section{論文の構成}
-論文の構成を書く．こんにちはおはようございますこんにちわ\cite{魚住春日2020mask},本当ですか
+論文の構成を書く．こんにちはおはようごとざいますこんにちわ\cite{魚住春日2020mask},本当ですか
 
 
 \chapter{実験モデル}
 \section{ネットワークモデル}
 ネットワーク出力$z$は\eref{eq:network-output}で得られる．
+ResNet
 
 \begin{equation}
   z = W_\mathrm{out} x + b
