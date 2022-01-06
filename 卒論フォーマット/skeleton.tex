@@ -1,0 +1,109 @@
+\documentclass[a4paper, oneside, openany, dvipdfmx]{suribt}% 本文が * ページ以下のときに (掲示に注意)
+\usepackage{graphicx}
+\usepackage{newtxtext,newtxmath}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\title{事前学習がVision Transformerに与える影響}
+%\titlewidth{}% タイトル幅 (指定するときは単位つきで)
+\author{桝田 修慎}
+\eauthor{Masachika Masuda}% Copyright 表示で使われる
+\studentid{18A1066}
+\supervisor{山口裕 助教}% 1 つ引数をとる (役職まで含めて書く)
+%\supervisor{指導教員名 役職 \and 指導教員名 役職}% 複数教員の場合，\and でつなげる
+\handin{2022}{2}% 提出月. 2 つ (年, 月) 引数をとる
+\keywords{Vision Transformer} % 概要の下に表示される
+\keywords{事前学習}
+\keywords{データ拡張}
+
+\newcommand{\fref}[1]{図\ref{#1}}
+\newcommand{\tref}[1]{表\ref{#1}}
+\newcommand{\eref}[1]{式\eqref{#1}}
+
+\begin{document}
+\maketitle%%%%%%%%%%%%%%%%%%% タイトル %%%%
+　事前学習がVision Transformerに与える影響
+
+\frontmatter% ここから前文
+\begin{abstract}%%%%%%%%%%%%% 概要 %%%%%%%%
+  リザバー計算\cite{jaeger2004harnessing,maass2002real}を用いる．
+\end{abstract}
+
+\tableofcontents%%%%%%%%%%%%% 目次 %%%%%%%%
+
+
+\mainmatter% ここから本文 %%% 本文 %%%%%%%%
+\chapter{序論}
+\section{背景}
+背景を書く．
+\section{本研究の目的}
+目的を書く．
+\section{論文の構成}
+論文の構成を書く．
+
+
+\chapter{実験モデル}
+\section{ネットワークモデル}
+ネットワーク出力$z$は\eref{eq:network-output}で得られる．
+
+\begin{equation}
+  z = W_\mathrm{out} x + b
+  \label{eq:network-output}
+\end{equation}
+
+\section{手順}
+実験の条件を以下に示す．
+\begin{itemize}
+  \item 条件１
+  \item 条件２
+\end{itemize}
+
+実験手順を以下に示す．
+
+\begin{enumerate}
+  \item ステップ１
+  \item ステップ２
+\end{enumerate}
+
+
+\chapter{実験結果}
+
+実験結果を\fref{fig:pcolormesh}に示す．
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figs/pcolormesh.eps}
+  \caption{pcolormesh}
+  \label{fig:pcolormesh}
+\end{figure}
+
+条件ごとの結果を\tref{tb:result}に示す．
+\begin{table}[htbp]
+  \caption{条件ごとの実験結果}
+  \label{tb:result}
+  \centering\begin{tabular}{c|ccc}\hline
+    条件 & loss & acc & std\\\hline
+    条件1 & 0.2 & 0.86 & $\pm 0.15$\\\hline
+    条件2 & 0.1 & 0.92 & $\pm 0.05$\\\hline
+  \end{tabular}
+\end{table}
+
+\chapter{議論}
+議論を書く．
+
+\chapter{結論}
+結論を書く．
+
+\backmatter% ここから後付
+\chapter{謝辞}%%%%%%%%%%%%%%% 謝辞 %%%%%%%
+謝辞を書く．
+
+% \begin{thebibliography}{}%%%% 参考文献 %%%
+%   \bibitem{}
+% \end{thebibliography}
+\bibliographystyle{junsrt}%           BibTeX を使う場合
+\bibliography{bibitem}% BibTeX を使う場合
+
+\appendix% ここから付録 %%%%% 付録 %%%%%%%
+\chapter{実験結果の図}
+付録があればここに書く．
+
+\end{document}
