@@ -12,8 +12,6 @@
 %\supervisor{指導教員名 役職 \and 指導教員名 役職}% 複数教員の場合，\and でつなげる
 \handin{2022}{2}% 提出月. 2 つ (年, 月) 引数をとる
 \keywords{Vision Transformer} % 概要の下に表示される
-\keywords{事前学習}
-\keywords{データ拡張}
 
 \newcommand{\fref}[1]{図\ref{#1}}
 \newcommand{\tref}[1]{表\ref{#1}}
@@ -46,8 +44,20 @@ Vision Transformerは，層を深くし畳み込みを行う畳み込みニュ�
   \item 事前学習やデータ拡張が各モデルに及ぼす影響を調べる．
 \end{enumerate}
 
+\section{深層学習}
+深層学習とは，脳の神経回路を模したニューラルネットワークをより深くしたものを指し，入力データから有用な特徴量を自動で抽出することができる．
+\subsection{畳み込みニューラルネットワーク}
+\subsection{再帰ニューラルネットワーク}
+\subsection{ResNet}
+\subsection{VGG}
+\subsection{Transformer}
+Transformer\cite{vaswani2017attention}は，それまで機械翻訳モデルで多く使われてきた畳み込みニューラルネットワーク・再帰ニューラルネットワークのような複雑なアーキテクチャを持つネットワークとは違い
+Attention機構のみを用いて構成されているエンコーダ・デコーダモデルである．
+\subsection{Vision Transformer}
+Vision Transformerは，機械翻訳で用いられていたTransformerをコンピュータビジョンに適応させたモデルであり，画像を複数のパッチに分割してそれぞれをベクトルとして埋め込み，平坦化して入力とする特徴がある．
+
 \section{論文の構成}
-論文の構成を書く．こんにちはおはようごとざいますこんにちわ\cite{魚住春日2020mask},本当ですか
+論文の構成を書く．こんにちはおはようごとざいますこんにちわ,本当ですか
 
 
 \chapter{実験モデル}
@@ -61,11 +71,31 @@ ResNet
 \end{equation}
 
 \section{手順}
-実験の条件を以下に示す．
+実験の条件を\tref{tb:conditions}に示す．
+\begin{table}[htbp]
+  \caption{実験の条件}
+  \label{tb:conditions}
+  \centering\begin{tabular}{c|ccc}\hline
+    条件 & 事前学習 & データ拡張\\\hline
+    条件1 & なし & なし\\\hline
+    条件2 & なし & あり\\\hline
+    条件3 & あり & あり\\\hline
+  \end{tabular}
+\end{table}
+%\begin{table}[htbp]
+%  \caption{実験の条件}
+%  \label{tb:requirement}
+%  \centering\begin{tabular}{c|ccc}\hline
+%    条件 & 事前学習 & データ拡張 & image_size & batch_size & epoch & lr & optimizer & criterion\\\hline
+%    条件1 & なし & なし & 224x224 & 32 & 10 & 1e-4 & Adam & Cross Entropy Loss\\\hline
+%    条件2 & なし & あり & 224x224 & 32 & 10 & 1e-4 & Adam & Cross Entropy Loss\\\hline
+%    条件3 & あり & あり & 224x224 & 32 & 10 & 1e-4 & Adam & Cross Entropy Loss\\\hline
+%  \end{tabular}
+%\end{table}
 \begin{itemize}
-  \item 事前学習なし・データ拡張なし
-  \item 事前学習なし・データ拡張あり
-  \item 事前学習あり・データ拡張あり
+  \item 条件1:事前学習なし・データ拡張なし
+  \item 条件2:事前学習なし・データ拡張あり
+  \item 条件3:事前学習あり・データ拡張あり
 \end{itemize}
 
 実験手順を以下に示す．
@@ -91,9 +121,10 @@ ResNet
   \caption{条件ごとの実験結果}
   \label{tb:result}
   \centering\begin{tabular}{c|ccc}\hline
-    条件 & loss & acc & std\\\hline
-    条件1 & 0.2 & 0.86 & $\pm 0.15$\\\hline
-    条件2 & 0.1 & 0.92 & $\pm 0.05$\\\hline
+    条件 & 事前学習 & データ拡張\\\hline
+    条件1 & なし & なし\\\hline
+    条件2 & なし & あり\\\hline
+    条件3 & あり & あり\\\hline
   \end{tabular}
 \end{table}
 
