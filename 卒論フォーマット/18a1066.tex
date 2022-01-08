@@ -23,7 +23,7 @@
 
 \frontmatter% ここから前文
 \begin{abstract}%%%%%%%%%%%%% 概要 %%%%%%%%
-  リザバー計算\cite{jaeger2004harnessing,maass2002real}を用いる．
+  リザバー計算を用いる．
 \end{abstract}
 
 \tableofcontents%%%%%%%%%%%%% 目次 %%%%%%%%
@@ -32,30 +32,58 @@
 \mainmatter% ここから本文 %%% 本文 %%%%%%%%
 \chapter{序論}
 \section{背景}
-近年，画像認識分野では，機械翻訳で脚光を浴び
-ることになったTransformerモデル\cite{dosovitskiy2021image}をコンピュータビジョンに適応させたVision Transformerというモデルが登場した．
-Vision Transformerは，層を深くし畳み込みを行う畳み込みニューラルネットワークとは違い，畳み込み演算をAttention機構を用いて代用している．
+近年，画像認識分野では，機械翻訳で脚光を浴びることになったTransformer\cite{vaswani2017attention}をコンピュータビジョンに適応させたVision Transformer（以下ViTと称する）が登場した\cite{dosovitskiy2021image}．
+ViTは，層を深くし畳み込みを行う畳み込みニューラルネットワーク（以下CNNという）とは違い，畳み込み演算をAttention機構を用いて代用しており，特に大規模なデータで事前学習を行なったときの，小・中規模の画像認識ベンチマーク（ImageNet，CIFAR-100，VTAB，etc．）では，
+過去のstate-of-the-artのCNNモデルと比べて少ない計算リソースで訓練することができ、更に素晴らしい結果も出している．
+
 本研究では，Vision Transformerが提案された論文
 「An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale」を参考にし，事前学習やデータ拡張の有無が，学習及び推論に与える影響を検証した．
 \section{本研究の目的}
 本研究の目的を以下に示す．
 \begin{enumerate}
-  \item 一定の条件下での振る舞いを従来のモデル（ResNet，VGG）比較し，ViTの優れている点・そうではない点を明らかにする．
+  \item 一定の条件下での振る舞いを従来のモデル（VGG，ResNet）と比較し，ViTの優れている点・そうではない点を明らかにする．
   \item 事前学習やデータ拡張が各モデルに及ぼす影響を調べる．
 \end{enumerate}
 
 \section{深層学習}
-深層学習とは，脳の神経回路を模したニューラルネットワークをより深くしたものを指し，入力データから有用な特徴量を自動で抽出することができる．
+深層学習とは，脳の神経回路を模したニューラルネットワークをより深くしたものを指し，入力データから有用な特徴量を自動で抽出する手法である．
 \subsection{畳み込みニューラルネットワーク}
-\subsection{再帰ニューラルネットワーク}
-\subsection{ResNet}
-\subsection{VGG}
+畳み込みニューラルネットワーク（CNN）は，入力した画像に対して重み行列（カーネル）を移動させながらスカラ積を求めていく畳み込み層を複数重ねているネットワークのことである．
+カーネルは画像全体に同じものを適用するため，CNNは移動させたカーネルと画像のスカラ積による局所性と，画像全体に渡る同一カーネルの重みの使用による移動不変性を持つ．
+%移動不変性：局所的なパターンが画像内の物体位置にかかわらず、出力に対して効果的であること．局所性：近傍における局所的な演算処理
+\subsection{VGG\cite{simonyan2015deep}}
+VGGはCNNの一種で，3x3という小さいカーネルを用いており，2014年当時では珍しい16層及び19層の深いネットワークである．
+畳み込みとプーリング，線形層のシンプルなアーキテクチャであるにも関わらず，2014年のImageNetチャレンジのローカリゼーション・クラシフィケーションタスクで1位と2位を収めている．
+
+\subsection{ResNet\cite{he2015deep}}
+一般的に，CNNでは層を重ねることで，より高次元な特徴を抽出することができるが，層が深くなるにつれて勾配が発散・消失するという問題があった．
+しかし，ResNetは，畳み込み層を重ねるだけではなく，前の層，もしくはより浅い層の出力を次の層の入力とする残差機構（ショートカット結合）を取り入れることで，より畳み込み層を多く積み重ねながらも，SoTAを達成した．
+ResNetのブロックの一部を\fref{fig:res_arch}に示す．
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figs/resnet.png}
+  \caption{Residual learning}
+  \label{fig:res_arch}
+\end{figure}
 \subsection{Transformer}
-Transformer\cite{vaswani2017attention}は，それまで機械翻訳モデルで多く使われてきた畳み込みニューラルネットワーク・再帰ニューラルネットワークのような複雑なアーキテクチャを持つネットワークとは違い
+Transformerは，それまで機械翻訳モデルで多く使われてきた畳み込みニューラルネットワーク・再帰ニューラルネットワークのような複雑なアーキテクチャを持つネットワークとは違い
 Attention機構のみを用いて構成されているエンコーダ・デコーダモデルである．
+Transformerのアーキテクチャを\fref{fig:tr_arch}に示す．
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figs/transformer.png}
+  \caption{Transformerのアーキテクチャ}
+  \label{fig:tr_arch}
+\end{figure}
 \subsection{Vision Transformer}
 Vision Transformerは，機械翻訳で用いられていたTransformerをコンピュータビジョンに適応させたモデルであり，画像を複数のパッチに分割してそれぞれをベクトルとして埋め込み，平坦化して入力とする特徴がある．
-
+Vision Transformerのアーキテクチャを\fref{fig:vit_arch}に示す．
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figs/vit.png}
+  \caption{Vision Transformerのアーキテクチャ}
+  \label{fig:vit_arch}
+\end{figure}
 \section{論文の構成}
 論文の構成を書く．こんにちはおはようごとざいますこんにちわ,本当ですか
 
