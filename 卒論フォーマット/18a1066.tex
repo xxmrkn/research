@@ -85,13 +85,46 @@ Vision Transformerのアーキテクチャを\fref{fig:vit_arch}に示す．
   \label{fig:vit_arch}
 \end{figure}
 \section{論文の構成}
-論文の構成を書く．こんにちはおはようごとざいますこんにちわ,本当ですか
-
+論文の構成を書く．
 
 \chapter{実験モデル}
+\section{使用ツール・実験環境}
+\subsection{Python}
+Pythonは1990年代の始め，オランダにあるStichting Mathematisch CentrumでGuido van RossumによってABCと呼ばれる言語の後継言語として生み出された．
+Pythonはコードを簡潔に書くことができ，数値計算のNumPy，データ解析のPandasなど，専門的なライブラリが充実していることから，機械学習の研究開発をはじめとしたさまざまな分野で使用されている言語である．
+簡単にPythonを始めるディストリビューションとしてAnacondaがよく使われている．
+\subsection{PyTorch}
+PyTorchはディープラーニング・プロジェクトの構築を容易にする，Pythonのライブラリである．柔軟性を重視した設計であり，さらに，ディープラーニングモデルをPythonの慣用的なクラスや関数の取り扱い方
+で実装できるようになっている．
+\subsection{Pytorch Image models}
+Pytorch Image Models（timm）はRoss Wightmanによって作成されたディープラーニングライブラリであり，コンピュータビジョンの最先端のモデルが集められている．
+数行の記述でモデルを呼び出すことができ，必要に応じて書き換えることで，さまざまなタスクに適用できる．
+\subsection{Albumentations}
+AlbumentationsはPythonのためのデータ拡張のライブラリである．
+モデルの汎化性能を上げるために行うデータ拡張のメソッドを多数揃えており，パイプラインを構成するとデータを効率的に拡張できる．
+\subsection{ImageNet}
+ImageNetはディープラーニング研究のために無償で利用できる大規模なデータセットのことで，モデルの性能を測るためのベンチマークとして使われることが多い．
+\subsection{Kaggle}
+Kaggleは世界規模のデータサイエンスのプラットフォームであり，世界中のデータサイエンティストが技術を競う場である．
+本実験ではKaggleが提供しているNotebookのGPUを利用して学習及び推論を行う．
+\subsection{Plant Pathology 2021 - FGVC8}
+本実験ではKaggle上で提供されているデータセットのPlant Pathology2021を用いる．
+このデータセットの構成を\tref{tb:dataset}に示す．
+\begin{table}[htbp]
+  \caption{データセットの構成}
+  \label{tb:dataset}
+  \centering\begin{tabular}{c|ccc}\hline
+    データセットの構成 & 説明\\ \hline
+    test\_images & 3枚の画像\\ \hline
+    train\_images & 18,632枚の画像\\ \hline
+    sample\_submission.csv & 提出用のサンプルcsvファイル\\ \hline
+    train.csv & image，labelsの2カラムのcsvファイル\\ \hline
+  \end{tabular}
+\end{table}
+
+
 \section{ネットワークモデル}
-ネットワーク出力$z$は\eref{eq:network-output}で得られる．
-ResNet
+ViTの入力は画像である．本実験では画像サイズ224x224
 
 \begin{equation}
   z = W_\mathrm{out} x + b
@@ -136,13 +169,7 @@ ResNet
 
 \chapter{実験結果}
 
-実験結果を\fref{fig:pcolormesh}に示す．
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\linewidth]{figs/pcolormesh.eps}
-  \caption{pcolormesh}
-  \label{fig:pcolormesh}
-\end{figure}
+実験結果をに示す．
 
 条件ごとの結果を\tref{tb:result}に示す．
 \begin{table}[htbp]
