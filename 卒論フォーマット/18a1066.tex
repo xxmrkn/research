@@ -84,10 +84,6 @@ Vision Transformerのアーキテクチャを\fref{fig:vit_arch}に示す．
   \caption{Vision Transformerのアーキテクチャ}
   \label{fig:vit_arch}
 \end{figure}
-\section{論文の構成}
-論文の構成を書く．
-
-\chapter{実験モデル}
 \section{使用ツール・実験環境}
 \subsection{Python}
 Pythonは1990年代の始め，オランダにあるStichting Mathematisch CentrumでGuido van RossumによってABCと呼ばれる言語の後継言語として生み出された．
@@ -121,15 +117,48 @@ Kaggleは世界規模のデータサイエンスのプラットフォームで�
     train.csv & image，labelsの2カラムのcsvファイル\\ \hline
   \end{tabular}
 \end{table}
+\section{論文の構成}
+論文の構成を書く．
 
+\chapter{実験モデル}
 
 \section{ネットワークモデル}
-ViTの入力は画像である．本実験では画像サイズ224x224
-
+ViTの入力は画像である．画像サイズを\textit{H}，\textit{W}，チャネル数を\textit{C}とすると，入力\textit{x}は\eref{eq:network-input1}のように表せる．
 \begin{equation}
-  z = W_\mathrm{out} x + b
-  \label{eq:network-output}
+  x\in\mathbb{R}^{H\times W\times C}
+  \label{eq:network-input1}
 \end{equation}
+また，二次元画像を扱うために，二次元の平坦化したパッチに整形する．\eref{eq:network-input2}に示す．
+\begin{equation}
+  x_{p}\in\mathbb{R}^{N\times(P^{2}\times C)}
+  \label{eq:network-input2}
+\end{equation}
+ここで，\textit{N}はパッチ数であり，\textit{P}はパッチサイズである．また，\textit{N}は\textit{H}，\textit{W}，\textit{P}を用いて\eref{eq:network-input3}のように表せる．
+\begin{equation}
+  N=\frac{HW}{P^{2}}
+  \label{eq:network-input3}
+\end{equation}
+ViTのエンコーダに入力するには，$x_{p}$をさらに埋め込む必要がある．長さ$P^{2}\times C$を\textit{D}次元のベクトルとして，線形投影したものを埋め込みパッチ$z_{0}$とする．
+また，入力データの先頭には[class]トークンを付与し，埋め込みパッチ$z^{0}_{0}=x_{class}とする$．\eref{eq:network-input4}に示す．
+\begin{equation}
+  z_{0}=[x_{class};\ x^{1}_{p}E;\ x^{2}_{p}E;\cdot\cdot\cdot;\ x^{N}_{p}E]+E_{pos},\qquad E\in\mathbb{R}^{(P^{2}\times C)\times D},\ E_{pos}\in\mathbb{R}^{(N+1))\times D}
+  \label{eq:network-input4}
+\end{equation}
+ここで，\textit{E}はパッチを\textit{D}次元のベクトルへの埋め込みを示し，$E_{pos}$は各パッチの位置が一意に定まるように情報を付加する位置エンコーディングを表す．
+上式で得られた入力$z_{0}$はMulti-Head Attention（以下，MSAと称する）に入力される．MSAでは，Attentionを求める計算を複数回行う．Attentionの算出式を\eref{eq:network-input5}に示す．
+\begin{equation}
+  Attention(Q,K,V) = softmax(\frac{QK^{T}}{\sqrt{d_{k}}})V
+  \label{eq:network-input5}
+\end{equation}
+初めに，入力ベクトルから\textit{Q，K，V}ベクトルを生成する．このとき，\textit{Q，K}の次元は$d_{k}$で，\textit{V}の次元は$d_{k}$である．
+計算時は，\textit{Q，K}の要素積を$\sqrt{d_{k}}$で除算し，softmax関数で0から1の値にする．最後に\textit{V}をかけるとAttentionスコアが算出できる．
+Attentionの算出過程を\fref{fig:attention}に示す．
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{figs/attention.png}
+  \caption{Attentionの算出過程}
+  \label{fig:attention}
+\end{figure}
 
 \section{手順}
 実験の条件を\tref{tb:conditions}に示す．
