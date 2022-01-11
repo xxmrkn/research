@@ -100,7 +100,9 @@ Pytorch Image Models（timm）はRoss Wightmanによって作成されたディ�
 AlbumentationsはPythonのためのデータ拡張のライブラリである．
 モデルの汎化性能を上げるために行うデータ拡張のメソッドを多数揃えており，パイプラインを構成するとデータを効率的に拡張できる．
 \subsection{ImageNet}
-ImageNetはディープラーニング研究のために無償で利用できる大規模なデータセットのことで，モデルの性能を測るためのベンチマークとして使われることが多い．
+ImageNetはディープラーニング研究のために無償で利用できる大規模なデータセットのことで，モデルの性能を測るためのベンチマークとして使われる．
+本実験ではImageNetの中でも「ILSVRC-2012 ImageNet」を使用する．このデータセットは，1000のクラス，130万枚の画像で構成されている．
+また，事前学習の規模によって認識精度が向上するViTの性質を確かめるために，より大規模なデータセットとして，ImageNet-21kを使用した．このデータセットは21,000のクラス及び1,400万枚の画像で構成されている．
 \subsection{Kaggle}
 Kaggleは世界規模のデータサイエンスのプラットフォームであり，世界中のデータサイエンティストが技術を競う場である．
 本実験ではKaggleが提供しているNotebookのGPUを利用して学習及び推論を行う．
@@ -166,28 +168,14 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 \begin{table}[htbp]
   \caption{実験の条件}
   \label{tb:conditions}
-  \centering\begin{tabular}{c|ccc}\hline
-    \backslashbox{条件}{オプション} & 事前学習 & データ拡張\\\hline
-    条件1 & なし & なし\\\hline
-    条件2 & なし & あり\\\hline
-    条件3 & あり & あり\\\hline
+  \centering\begin{tabular}{c|cccc}\hline
+    \backslashbox{条件}{オプション} & 事前学習 & データ拡張 & ILSVRC-2012 ImageNet & ImageNet-21k\\\hline
+    条件1 & なし & なし & $\circ$ & $\times$\\\hline
+    条件2 & なし & あり & $\circ$ & $\times$\\\hline
+    条件3 & あり & あり & $\circ$ & $\times$\\\hline
+    条件4（ViTのみ） & あり & あり & $\circ$ & $\circ$\\\hline
   \end{tabular}
 \end{table}
-%\begin{table}[htbp]
-%  \caption{実験の条件}
-%  \label{tb:requirement}
-%  \centering\begin{tabular}{c|ccc}\hline
-%    条件 & 事前学習 & データ拡張 & image_size & batch_size & epoch & lr & optimizer & criterion\\\hline
-%    条件1 & なし & なし & 224x224 & 32 & 10 & 1e-4 & Adam & Cross Entropy Loss\\\hline
-%    条件2 & なし & あり & 224x224 & 32 & 10 & 1e-4 & Adam & Cross Entropy Loss\\\hline
-%    条件3 & あり & あり & 224x224 & 32 & 10 & 1e-4 & Adam & Cross Entropy Loss\\\hline
-%  \end{tabular}
-%\end{table}
-\begin{itemize}
-  \item 条件1:事前学習なし・データ拡張なし
-  \item 条件2:事前学習なし・データ拡張あり
-  \item 条件3:事前学習あり・データ拡張あり
-\end{itemize}
 
 実験手順を以下に示す．
 
@@ -201,12 +189,12 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 
 実験結果をに示す．
 
-条件ごとの結果を\tref{tb:result1}，\tref{tb:result2}，\tref{tb:result3}に示す．
+条件ごとの実験結果を\tref{tb:result1}，\tref{tb:result2}，\tref{tb:result3}，\tref{tb:result4}に示す．
 \begin{table}[htbp]
   \caption{条件1の実験結果}
   \label{tb:result1}
   \centering\begin{tabular}{c|ccc}\hline
-    \backslashbox{指標}{モデル} & ViT & ResNet & VGG\\\hline
+    \backslashbox{指標}{モデル} & vit\_base\_patch\_224 & resnet18d & vgg11\\\hline
     best valid accuracy & 0.5906 & 0.8209 & 0.8384\\\hline
     best valid f1-Score & 0.4453 & 0.6283 &0.6349\\\hline
     best valid loss & 1.1983 & 0.5554 &0.5132\\\hline
@@ -217,10 +205,10 @@ Attentionの算出過程を\fref{fig:attention}に示す．
   \caption{条件2の実験結果}
   \label{tb:result2}
   \centering\begin{tabular}{c|ccc}\hline
-    \backslashbox{指標}{モデル} & ViT & ResNet & VGG\\\hline
-    best valid accuracy & 0.5906 & 0.8209 & 0.8384\\\hline
-    best valid f1-Score & 0.4453 & 0.6283 &0.6349\\\hline
-    best valid loss & 1.1983 & 0.5554 &0.5132\\\hline
+    \backslashbox{指標}{モデル} & vit\_base\_patch\_224 & resnet18d & vgg11\\\hline
+    best valid accuracy & 0.8312 & 0.8568 & 0.8611\\\hline
+    best valid f1-Score & 0.6605 & 0.6708 &0.6798\\\hline
+    best valid loss & 0.5562 & 0.4989 &0.4433\\\hline
   \end{tabular}
 \end{table}
 
@@ -228,10 +216,22 @@ Attentionの算出過程を\fref{fig:attention}に示す．
   \caption{条件3の実験結果}
   \label{tb:result3}
   \centering\begin{tabular}{c|ccc}\hline
-    \backslashbox{指標}{モデル} & ViT & ResNet & VGG\\\hline
-    best valid accuracy & 0.5906 & 0.8209 & 0.8384\\\hline
-    best valid f1-Score & 0.4453 & 0.6283 &0.6349\\\hline
-    best valid loss & 1.1983 & 0.5554 &0.5132\\\hline
+    \backslashbox{指標}{モデル} & vit\_base\_patch\_224 & resnet18d & vgg11\\\hline
+    best valid accuracy & 0.8806 & 0.8881 & 0.8856\\\hline
+    best valid f1-Score & 0.7199 & 0.7141 &0.7114\\\hline
+    best valid loss & 0.3809 & 0.3626 &0.3635\\\hline
+  \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+  \caption{条件4の実験結果}
+  \label{tb:result4}
+  \centering\begin{tabular}{c|ccc}\hline
+    \backslashbox{指標}{モデル} & \multicolumn{2}{c}{vit\_base\_patch\_224}\\\hline
+    データセット & ILSVRC-2012 ImageNet & ImageNet-21k \\\hline
+    best valid accuracy & 0.8997 & 0.9057\\\hline
+    best valid f1-Score & 0.7284 & 0.7413\\\hline
+    best valid loss & 0.3301 & 0.3086\\\hline
   \end{tabular}
 \end{table}
 
