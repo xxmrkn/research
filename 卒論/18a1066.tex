@@ -3,6 +3,7 @@
 \usepackage{newtxtext,newtxmath}
 \usepackage{amsmath}
 \usepackage{mathtools}
+\usepackage{slashbox}
 \usepackage[unicode, ipaex]{pxchfon}
 \title{事前学習がVision Transformerに与える影響}
 %\titlewidth{}% タイトル幅 (指定するときは単位つきで)
@@ -26,8 +27,8 @@
   Vision Transformerを用いる．
 \end{abstract}
 
+\setcounter{tocdepth}{2}
 \tableofcontents%%%%%%%%%%%%% 目次 %%%%%%%%
-
 
 \mainmatter% ここから本文 %%% 本文 %%%%%%%%
 \chapter{序論}
@@ -166,7 +167,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
   \caption{実験の条件}
   \label{tb:conditions}
   \centering\begin{tabular}{c|ccc}\hline
-    条件 & 事前学習 & データ拡張\\\hline
+    \backslashbox{条件}{オプション} & 事前学習 & データ拡張\\\hline
     条件1 & なし & なし\\\hline
     条件2 & なし & あり\\\hline
     条件3 & あり & あり\\\hline
@@ -200,15 +201,37 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 
 実験結果をに示す．
 
-条件ごとの結果を\tref{tb:result}に示す．
+条件ごとの結果を\tref{tb:result1}，\tref{tb:result2}，\tref{tb:result3}に示す．
 \begin{table}[htbp]
-  \caption{条件ごとの実験結果}
-  \label{tb:result}
+  \caption{条件1の実験結果}
+  \label{tb:result1}
   \centering\begin{tabular}{c|ccc}\hline
-    条件 & 事前学習 & データ拡張\\\hline
-    条件1 & なし & なし\\\hline
-    条件2 & なし & あり\\\hline
-    条件3 & あり & あり\\\hline
+    \backslashbox{指標}{モデル} & ViT & ResNet & VGG\\\hline
+    best valid accuracy & 0.5906 & 0.8209 & 0.8384\\\hline
+    best valid f1-Score & 0.4453 & 0.6283 &0.6349\\\hline
+    best valid loss & 1.1983 & 0.5554 &0.5132\\\hline
+  \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+  \caption{条件2の実験結果}
+  \label{tb:result2}
+  \centering\begin{tabular}{c|ccc}\hline
+    \backslashbox{指標}{モデル} & ViT & ResNet & VGG\\\hline
+    best valid accuracy & 0.5906 & 0.8209 & 0.8384\\\hline
+    best valid f1-Score & 0.4453 & 0.6283 &0.6349\\\hline
+    best valid loss & 1.1983 & 0.5554 &0.5132\\\hline
+  \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+  \caption{条件3の実験結果}
+  \label{tb:result3}
+  \centering\begin{tabular}{c|ccc}\hline
+    \backslashbox{指標}{モデル} & ViT & ResNet & VGG\\\hline
+    best valid accuracy & 0.5906 & 0.8209 & 0.8384\\\hline
+    best valid f1-Score & 0.4453 & 0.6283 &0.6349\\\hline
+    best valid loss & 1.1983 & 0.5554 &0.5132\\\hline
   \end{tabular}
 \end{table}
 
@@ -220,7 +243,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 
 \backmatter% ここから後付
 \chapter{謝辞}%%%%%%%%%%%%%%% 謝辞 %%%%%%%
-謝辞を書く．
+ありがとうございます．
 
 % \begin{thebibliography}{}%%%% 参考文献 %%%
 %   \bibitem{}
