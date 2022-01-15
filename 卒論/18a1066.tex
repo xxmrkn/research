@@ -5,7 +5,7 @@
 \usepackage{mathtools}
 \usepackage{slashbox}
 \usepackage[unicode, ipaex]{pxchfon}
-
+\usepackage{here}
 \usepackage[hang,small,bf]{caption}
 \usepackage[subrefformat=parens]{subcaption}
 \captionsetup{compatibility=false}
@@ -62,8 +62,9 @@ VGGはCNNの一種で，3x3という小さいカーネルを用いており，20
 
 \subsection{ResNet\cite{he2015deep}}
 一般的に，CNNでは層を重ねることで，より高次元な特徴を抽出することができるが，層が深くなるにつれて勾配が発散・消失するという問題があった．
-しかし，ResNetは，畳み込み層を重ねるだけではなく，前の層，もしくはより浅い層の出力を次の層の入力とする残差機構（ショートカット結合）を取り入れることで，より畳み込み層を多く積み重ねながらも，SoTAを達成した．
-ResNetのブロックの一部を\fref{fig:res_arch}に示す．
+しかし，ResNetは，畳み込み層を重ねるだけではなく，前の層，もしくはより浅い層の出力を次の層の入力とする残差機構（スキップ接続）を取り入れることで，より畳み込み層を多く積み重ねながらも，SoTAを達成した．
+ResNetのブロックの一部を\fref{fig:res_arch}に示す．入力を$x$とし，2層のweight layer(畳み込み層)を$f(x)$とする．入力$x$はweight layerと活性化関数ReLUを経由し，$f(x)$として出力される．
+そしてスキップ接続の$x$を加算し，最終的な出力は$f(x)+x$である．
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\linewidth]{figs/resnet.png}
@@ -209,7 +210,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 \end{table}
 
 条件1の各指標の結果を\fref{fig:re1}に示す．
-\begin{figure}[htbp]
+\begin{figure}[H]
   \begin{tabular}{cc}
     \begin{minipage}[t]{0.45\hsize}
       \centering
@@ -247,7 +248,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 \end{table}
 
 条件2の各指標の結果を\fref{fig:re2}に示す．
-\begin{figure}[htbp]
+\begin{figure}[H]
   \begin{tabular}{cc}
     \begin{minipage}[t]{0.45\hsize}
       \centering
@@ -284,7 +285,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
   \end{tabular}
 \end{table}
 条件3の各指標の結果を\fref{fig:re3}に示す．
-\begin{figure}[htbp]
+\begin{figure}[H]
   \begin{tabular}{cc}
     \begin{minipage}[t]{0.45\hsize}
       \centering
@@ -331,7 +332,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 %  \label{fig:a}
 %\end{figure}
 条件4の各指標の結果を\fref{fig:re4}に示す．
-\begin{figure}[htbp]
+\begin{figure}[H]
   \begin{tabular}{cc}
     \begin{minipage}[t]{0.45\hsize}
       \centering
