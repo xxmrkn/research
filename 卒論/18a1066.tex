@@ -175,7 +175,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
   \centering\begin{tabular}{c|cccc}\hline
     \backslashbox{条件}{オプション} & 事前学習 & データ拡張 & ILSVRC-2012 ImageNet & ImageNet-21k\\\hline
     条件1 & なし & なし & $\circ$ & $\times$\\\hline
-    条件2 & なし & あり & $\circ$ & $\times$\\\hline
+    条件2 & あり & なし & $\circ$ & $\times$\\\hline
     条件3 & あり & あり & $\circ$ & $\times$\\\hline
     条件4（ViTのみ） & あり & あり & $\circ$ & $\circ$\\\hline
   \end{tabular}
@@ -184,14 +184,16 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 実験手順を以下に示す．
 
 \begin{enumerate}
-  \item ステップ１
-  \item ステップ２
+  \item 条件1では，事前学習・データ拡張を行わなずに認識精度を検証する．論文より\cite{dosovitskiy2021image}，ViTは大規模なデータセットで事前学習を行なった場合に良い認識精度を発揮することがわかっているので，
+以降，このスコアを一つの基準として比較を進める．
+  \item 条件2では，事前学習を行い，データ拡張は行わない．予想される結果として，訓練データにオーバーフィッティングすることが考えられる．
+  \item 条件3では，オーバーフィッティングを防ぎ，検証データに対して認識精度を向上させるために，データ拡張を行う．これにより，訓練時と検証時の各指標の差異が小さくなると考えられる．
+  \item 条件4では，ViTのみで実験を行う．先に述べた通り，ViTは事前学習の規模が大きいほど各画像認識のベンチマークで良い認識結果が得られている．そこで，条件3までで事前学習に使用してきたデータセットのILSVRC-2012 ImageNetに加え，
+  より規模の大きいImageNet-21kを使用する．これにより各指標がこれまでよりいい結果を示すと予想される．
 \end{enumerate}
 
 
 \chapter{実験結果}
-
-実験結果をに示す．
 
 条件ごとの実験結果を\tref{tb:result1}，\tref{tb:result2}，\tref{tb:result3}，\tref{tb:result4}に，
 また，それに対応するグラフを\fref{fig:re1}，\fref{fig:re2}，\fref{fig:re3}，\fref{fig:re4}示す．
@@ -368,8 +370,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 
 \backmatter% ここから後付
 \chapter{謝辞}%%%%%%%%%%%%%%% 謝辞 %%%%%%%
-本研究を進めるにあたり，ご指導くださった山口裕助教授．
-本当にありがとうございました．
+本研究を進めるにあたり，ご指導くださった山口裕助教授に感謝の意を表します．
 
 % \begin{thebibliography}{}%%%% 参考文献 %%%
 %   \bibitem{}
