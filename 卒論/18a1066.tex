@@ -180,6 +180,27 @@ Attentionの算出過程を\fref{fig:attention}に示す．
   \label{fig:attention}
 \end{figure}
 
+\section{モデルのパラメータ}
+本実験で使用した各モデルのパラメータ及び設定を\tref{tb:param}に示す．
+\begin{table}[htbp]
+  \caption{各モデルのパラメータ及び設定}
+  \label{tb:param}
+  \centering\begin{tabular}{c|ccc}\hline
+    \backslashbox{指標}{モデル} & vit\_base\_patch\_224 & resnet18d & vgg11\\\hline
+    best valid accuracy & 0.5906 & 0.8209 & 0.8384\\\hline
+    best valid f1-Score & 0.4453 & 0.6283 &0.6349\\\hline
+    best valid loss & 1.1983 & 0.5554 &0.5132\\\hline
+  \end{tabular}
+\end{table}
+
+\section{評価指標}
+\subsection{Accuracy}
+Accuracyとは
+\subsection{F1-Score}
+F1-Scoreとは
+\subsection{Cross Entropy Loss}
+Cross Entropy Lossとは
+
 \section{手順}
 実験の条件を\tref{tb:conditions}に示す．
 \begin{table}[htbp]
