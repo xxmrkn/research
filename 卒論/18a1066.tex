@@ -67,16 +67,16 @@ ViTは，層を深くし畳み込みを行う畳み込みニューラルネッ�
 畳み込みニューラルネットワーク（CNN）は，入力した画像に対して重み行列（カーネル）を移動させながらスカラ積を求めていく畳み込み層を複数重ねているネットワークのことである．
 カーネルは画像全体に同じものを適用するため，CNNは移動させたカーネルと画像のスカラ積による局所性と，画像全体に渡る同一カーネルの重みの使用による移動不変性を持つ．
 %移動不変性：局所的なパターンが画像内の物体位置にかかわらず、出力に対して効果的であること．局所性：近傍における局所的な演算処理
-\subsection{VGG\cite{simonyan2015deep}}
-VGGはCNNの一種で，3x3という小さいカーネルを用いており，2014年当時では珍しい16層及び19層の深いネットワークである．
+\subsection{VGG}
+VGGはCNNの一種で，3x3という小さいカーネルを用いており，2014年当時では珍しい16層及び19層の深いネットワークである\cite{simonyan2015deep}．
 畳み込みとプーリング，線形層のシンプルなアーキテクチャであるにも関わらず，2014年のImageNetチャレンジのローカリゼーション・クラシフィケーションタスクで1位と2位を収めている．
 
-\subsection{ResNet\cite{he2015deep}}
+\subsection{ResNet}
 一般的に，CNNでは層を重ねることで，より高次元な特徴を抽出することができるが，層が深くなるにつれて勾配が発散・消失するという問題があった．
-しかし，ResNetは，畳み込み層を重ねるだけではなく，前の層，もしくはより浅い層の出力を次の層の入力とする残差機構（スキップ接続）を取り入れることで，より畳み込み層を多く積み重ねながらも，SoTAを達成した．
+しかし，ResNetは，畳み込み層を重ねるだけではなく，前の層，もしくはより浅い層の出力を次の層の入力とする残差機構（スキップ接続）を取り入れることで，より畳み込み層を多く積み重ねながらも，SoTAを達成した\cite{he2015deep}．
 ResNetのブロックの一部を\fref{fig:res_arch}に示す．入力を$x$とし，2層のweight layer(畳み込み層)を$f(x)$とする．入力$x$はweight layerと活性化関数ReLUを経由し，$f(x)$として出力される．
 そしてスキップ接続の$x$を加算し，最終的な出力は$f(x)+x$である．
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.9\linewidth]{figs/resnet.png}
   \caption{Residual learning\cite{he2015deep}}
@@ -84,18 +84,18 @@ ResNetのブロックの一部を\fref{fig:res_arch}に示す．入力を$x$と�
 \end{figure}
 \subsection{Transformer}
 Transformerは，それまで機械翻訳モデルで多く使われてきた畳み込みニューラルネットワーク・再帰ニューラルネットワークのような複雑なアーキテクチャを持つネットワークとは違い
-Attention機構のみを用いて構成されているエンコーダ・デコーダモデルである．
+Attention機構のみを用いて構成されているエンコーダ・デコーダモデルである\cite{vaswani2017attention}．
 Transformerのアーキテクチャを\fref{fig:tr_arch}に示す．
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.9\linewidth]{figs/transformer.png}
   \caption{Transformerのアーキテクチャ\cite{vaswani2017attention}}
   \label{fig:tr_arch}
 \end{figure}
 \subsection{Vision Transformer}
-Vision Transformerは，機械翻訳で用いられていたTransformerをコンピュータビジョンに適応させたモデルであり，画像を複数のパッチに分割してそれぞれをベクトルとして埋め込み，平坦化して入力とする特徴がある．
+Vision Transformerは，機械翻訳で用いられていたTransformerをコンピュータビジョンに適応させたモデルであり，画像を複数のパッチに分割してそれぞれをベクトルとして埋め込み，平坦化して入力とする特徴がある\cite{dosovitskiy2021image}．
 Vision Transformerのアーキテクチャを\fref{fig:vit_arch}に示す．
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.9\linewidth]{figs/vit.png}
   \caption{Vision Transformerのアーキテクチャ\cite{dosovitskiy2021image}}
@@ -266,7 +266,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
   \end{tabular}
 \end{table}
 
-条件1の各指標の結果を\fref{fig:re1}に示す．
+%条件1の各指標の結果を\fref{fig:re1}に示す．
 \begin{figure}[H]
   \begin{tabular}{cc}
     \begin{minipage}[t]{0.45\hsize}
@@ -304,30 +304,30 @@ Attentionの算出過程を\fref{fig:attention}に示す．
   \end{tabular}
 \end{table}
 
-条件2の各指標の結果を\fref{fig:re2}に示す．
+%条件2の各指標の結果を\fref{fig:re2}に示す．
 \begin{figure}[H]
   \begin{tabular}{cc}
     \begin{minipage}[t]{0.45\hsize}
       \centering
-      \includegraphics[keepaspectratio, scale=0.43]{figs/result2-1.png}
+      \includegraphics[keepaspectratio, scale=0.42]{figs/result2-1.png}
       \subcaption{Accuracy}
       %\label{composite}
     \end{minipage} &
     \begin{minipage}[t]{0.45\hsize}
       \centering
-      \includegraphics[keepaspectratio, scale=0.43]{figs/result2-2.png}
+      \includegraphics[keepaspectratio, scale=0.42]{figs/result2-2.png}
       \subcaption{F1-Score}
       %\label{Gradation}
     \end{minipage} \\
 
     \begin{minipage}[t]{0.45\hsize}
       \centering
-      \includegraphics[keepaspectratio, scale=0.43]{figs/result2-3.png}
+      \includegraphics[keepaspectratio, scale=0.42]{figs/result2-3.png}
       \subcaption{Loss}
       %\label{fill}
     \end{minipage}
   \end{tabular}
-  \caption{条件2の実験結果}
+  \caption{条件2の実験結果（図がおかしい）}
   \label{fig:re2}
 \end{figure}
 
@@ -341,7 +341,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
     best valid loss & 0.3809 & 0.3626 &0.3635\\\hline
   \end{tabular}
 \end{table}
-条件3の各指標の結果を\fref{fig:re3}に示す．
+%条件3の各指標の結果を\fref{fig:re3}に示す．
 \begin{figure}[H]
   \begin{tabular}{cc}
     \begin{minipage}[t]{0.45\hsize}
@@ -388,7 +388,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 %  \caption{Attentionの算出過程}
 %  \label{fig:a}
 %\end{figure}
-条件4の各指標の結果を\fref{fig:re4}に示す．
+%条件4の各指標の結果を\fref{fig:re4}に示す．
 \begin{figure}[H]
   \begin{tabular}{cc}
     \begin{minipage}[t]{0.45\hsize}
@@ -419,9 +419,12 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 条件1の実験結果より，ViTは事前学習なしの場合では良い認識結果は得られていないことがわかる．
 各指標はそれぞれ良い方向に向かっているものの，ResNet，VGGには遥かに及んでいない．これは，ViTがCNNとは違い，画像に対する帰納バイアスがないことが原因だと考えられる．
 帰納バイアスとは，モデルが学習する時にもっている何らかの仮定のことである．例えばCNNであれば，「畳み込み演算のように同一カーネルによる局所的な情報処理を画像全体に渡って繰り返す2次元構造」が，
-帰納バイアスとして働いていて，画像認識タスクにおいて優れた性能を発揮するに至っている．そして画像に対する帰納バイアスがないViTには，膨大なデータセットでの事前学習が有効とされている
+帰納バイアスとして働いていて，画像認識タスクにおいて優れた性能を発揮するに至っている．このバイアスがないことが，大規模なデータセットでの事前学習がViTに対して有効で，画像認識で良い結果を出す理由の一つである．
 %カーネルは画像全体に同じものを適用するため，CNNは移動させたカーネルと画像のスカラ積による局所性と，画像全体に渡る同一カーネルの重みの使用による移動不変性を持つ．
 %移動不変性：局所的なパターンが画像内の物体位置にかかわらず、出力に対して効果的であること．局所性：近傍における局所的な演算処理
+  条件2の実験結果から，事前学習をおこなった場合のViTは他2モデルより，優れた結果を示していることがわかる．しかし，trainingの値のみが上がり続け，validationの値は横ばいになっていることがわかる．
+これは，訓練データに対してオーバーフィッティングし，検証データに対する予測が上手くいっていないことが原因である．このことから次の検証では，検証データに対して汎化性能を上げるために，入力画像を加工するデータ拡張を行う．
+  条件3の実験結果から，データ拡張をおこなった場合のViTの各指標は，
 \chapter{結論}
 今回の実験で，Vision Transformerに事前学習を適用した時，
 自分で選択したデータセットに対して良い認識結果が得られ，事前学習時のデータセットの規模が認識結果に関係していることもわかった．
