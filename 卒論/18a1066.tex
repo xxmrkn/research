@@ -19,6 +19,13 @@
 \handin{2022}{2}% 提出月. 2 つ (年, 月) 引数をとる
 \keywords{Vision Transformer} % 概要の下に表示される
 
+%・データ構成とはなにか、>>> 2章ではどんなことをして、3章ではどんなことをするのか…
+%・実験結果の図が多い、付録に入れるべきか >>> 卒論であればメインに入れ込んで良い
+%・データ拡張の図は理論のところに入れるべきか、手順のところにいれるべきか >>> 上に同じ
+%・サブセクションまで目次に表示させるべきか >>> どちらでも良い
+%・図は基本的に自作 >>> 自作、元論文とほとんど同じ場合は引用する
+%・図のグリッドは必要か >>> どちらでも良い
+
 \newcommand{\fref}[1]{図\ref{#1}}
 \newcommand{\tref}[1]{表\ref{#1}}
 \newcommand{\eref}[1]{式\eqref{#1}}
@@ -28,7 +35,11 @@
 
 \frontmatter% ここから前文
 \begin{abstract}%%%%%%%%%%%%% 概要 %%%%%%%%
-  Vision Transformerを用いる．
+画像認識分野では，畳み込み層を重ねることで良い認識結果をもたらしたVGGをはじめ，残差機構を取り入れ，更に層を深くすることを可能にしたResNetがState-of-the-artを達成し，デファクトスタンダードとなっていた．
+しかし，今回のテーマであるVision Transformerは畳み込み層を使っておらず，Attention層を用いて代用している．
+また，Vision Transformerは規模の大きなデータセットでの事前学習は，認識結果に影響し，ImageNet ReaL，CIFAR-100，VTABなどの画像認識のベンチマークでState-of-the-artを達成し，更新した．
+
+
 \end{abstract}
 
 \setcounter{tocdepth}{2}
@@ -38,8 +49,8 @@
 \chapter{序論}
 \section{背景}
 近年，画像認識分野では，機械翻訳で脚光を浴びることになったTransformer\cite{vaswani2017attention}をコンピュータビジョンに適応させたVision Transformer（以下ViTと称する）が登場した\cite{dosovitskiy2021image}．
-ViTは，層を深くし畳み込みを行う畳み込みニューラルネットワーク（以下CNNという）とは違い，畳み込み演算をAttention機構を用いて代用しており，特に大規模なデータで事前学習を行なったときの，小・中規模の画像認識ベンチマーク（ImageNet，CIFAR-100，VTAB，etc．）では，
-過去のstate-of-the-artのCNNモデルと比べて少ない計算リソースで訓練することができ、更に素晴らしい結果も出している．
+ViTは，層を深くし畳み込みを行う畳み込みニューラルネットワーク（以下CNNと称する）とは違い，畳み込み演算をAttention機構を用いて代用しており，特に大規模なデータで事前学習を行なったときの，小・中規模の画像認識ベンチマーク（ImageNet ReaL，CIFAR-100，VTAB，etc．）では，
+過去のState-of-the-artのCNNモデルと比べて少ない計算リソースで訓練することができ、更に素晴らしい結果も出している．
 
 本研究では，Vision Transformerが提案された論文
 「An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale」を参考にし，事前学習やデータ拡張の有無が，学習及び推論に与える影響を検証した．
@@ -68,7 +79,7 @@ ResNetのブロックの一部を\fref{fig:res_arch}に示す．入力を$x$と�
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\linewidth]{figs/resnet.png}
-  \caption{Residual learning}
+  \caption{Residual learning\cite{he2015deep}}
   \label{fig:res_arch}
 \end{figure}
 \subsection{Transformer}
@@ -78,7 +89,7 @@ Transformerのアーキテクチャを\fref{fig:tr_arch}に示す．
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\linewidth]{figs/transformer.png}
-  \caption{Transformerのアーキテクチャ}
+  \caption{Transformerのアーキテクチャ\cite{vaswani2017attention}}
   \label{fig:tr_arch}
 \end{figure}
 \subsection{Vision Transformer}
@@ -87,23 +98,23 @@ Vision Transformerのアーキテクチャを\fref{fig:vit_arch}に示す．
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\linewidth]{figs/vit.png}
-  \caption{Vision Transformerのアーキテクチャ}
+  \caption{Vision Transformerのアーキテクチャ\cite{dosovitskiy2021image}}
   \label{fig:vit_arch}
 \end{figure}
 \section{使用ツール・実験環境}
 \subsection{Python}
 Pythonは1990年代の始め，オランダにあるStichting Mathematisch CentrumでGuido van RossumによってABCと呼ばれる言語の後継言語として生み出された．
 Pythonはコードを簡潔に書くことができ，数値計算のNumPy，データ解析のPandasなど，専門的なライブラリが充実していることから，機械学習の研究開発をはじめとしたさまざまな分野で使用されている言語である．
-簡単にPythonを始めるディストリビューションとしてAnacondaがよく使われる．
+簡単にPythonを始めるディストリビューションとしてAnacondaがよく使われる．また，本実験で使用したバージョンは3.7.10である．
 \subsection{PyTorch}
 PyTorchはディープラーニング・プロジェクトの構築を容易にする，Pythonのライブラリである．柔軟性を重視した設計であり，さらに，ディープラーニングモデルをPythonの慣用的なクラスや関数の取り扱い方
-で実装できるようになっている．
+で実装できるようになっている．本実験で使用したバージョンは1.9.1である．
 \subsection{Pytorch Image models}
 Pytorch Image Models（timm）はRoss Wightmanによって作成されたディープラーニングライブラリであり，コンピュータビジョンの最先端のモデルが集められている．
-数行の記述でモデルを呼び出すことができ，必要に応じて書き換えることで，さまざまなタスクに適用できる．
+数行の記述でモデルを呼び出すことができ，必要に応じて書き換えることで，さまざまなタスクに適用できる．本実験で使用したバージョンは0.5.2である．
 \subsection{Albumentations}
 AlbumentationsはPythonのためのデータ拡張のライブラリである．
-モデルの汎化性能を上げるために行うデータ拡張のメソッドを多数揃えており，パイプラインを構成するとデータを効率的に拡張できる．
+モデルの汎化性能を上げるために行うデータ拡張のメソッドを多数揃えており，パイプラインを構成するとデータを効率的に拡張できる．本実験で使用したバージョンは1.1.0である．
 \subsection{ImageNet}
 ImageNetはディープラーニング研究のために無償で利用できる大規模なデータセットのことで，モデルの性能を測るためのベンチマークとして使われる．
 本実験ではImageNetの中でも「ILSVRC-2012 ImageNet」を使用する．このデータセットは，1000のクラス，130万枚の画像で構成されている．
@@ -126,7 +137,8 @@ Kaggleは世界規模のデータサイエンスのプラットフォームで�
   \end{tabular}
 \end{table}
 \section{論文の構成}
-論文の構成を書く．
+2章では実験に使用するモデルViTのアーキテクチャを数式を用いて説明し，実験の手順や条件について示す．3章では実験結果を図と表を用いて示す．
+4章では3章の結果をもとに議論を行い，理解を深める．5章では今回の実験の総括を行う．
 
 \chapter{実験モデル}
 
@@ -189,6 +201,51 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 以降，このスコアを一つの基準として比較を進める．
   \item 条件2では，事前学習を行い，データ拡張は行わない．予想される結果として，訓練データにオーバーフィッティングすることが考えられる．
   \item 条件3では，オーバーフィッティングを防ぎ，検証データに対して認識精度を向上させるために，データ拡張を行う．これにより，訓練時と検証時の各指標の差異が小さくなると考えられる．
+  また，今回の実験で使用したデータ拡張はResize，Rotate，Horizontal Flip，Grid Dropout，Brightness Contrastである．それぞれ\fref{fig:aug}に示す．
+  \begin{figure}[H]
+    \begin{tabular}{cc}
+      \begin{minipage}[t]{0.45\hsize}
+        \centering
+        \includegraphics[keepaspectratio, scale=0.43]{figs/original.png}
+        \subcaption{Original}
+        %\label{Accuracy}
+      \end{minipage} &
+      \begin{minipage}[t]{0.45\hsize}
+        \centering
+        \includegraphics[keepaspectratio, scale=0.43]{figs/resize.png}
+        \subcaption{Resize}
+        %\label{F1-Score}
+      \end{minipage} \\
+  
+      \begin{minipage}[t]{0.45\hsize}
+        \centering
+        \includegraphics[keepaspectratio, scale=0.43]{figs/random_rotate.png}
+        \subcaption{Rotate}
+        %\label{Loss}
+      \end{minipage} &
+      \begin{minipage}[t]{0.45\hsize}
+        \centering
+        \includegraphics[keepaspectratio, scale=0.43]{figs/random_brightness_contrast.png}
+        \subcaption{Brightness Contrast}
+        %\label{Loss}
+      \end{minipage} \\
+
+      \begin{minipage}[t]{0.45\hsize}
+        \centering
+        \includegraphics[keepaspectratio, scale=0.43]{figs/holizontal_flip.png}
+        \subcaption{Horizontal Flip}
+        %\label{Loss}
+      \end{minipage} &
+      \begin{minipage}[t]{0.45\hsize}
+        \centering
+        \includegraphics[keepaspectratio, scale=0.43]{figs/grid_dropout.png}
+        \subcaption{Grid Dropout}
+        %\label{Loss}
+      \end{minipage}
+    \end{tabular}
+    \caption{条件1の実験結果}
+    \label{fig:aug}
+  \end{figure}
   \item 条件4では，ViTのみで実験を行う．先に述べた通り，ViTは事前学習の規模が大きいほど各画像認識のベンチマークで良い認識結果が得られている．そこで，条件3までで事前学習に使用してきたデータセットのILSVRC-2012 ImageNetに加え，
   より規模の大きいImageNet-21kを使用する．これにより各指標がこれまでよりいい結果を示すと予想される．
 \end{enumerate}
@@ -375,7 +432,7 @@ Attentionの算出過程を\fref{fig:attention}に示す．
 
 \backmatter% ここから後付
 \chapter{謝辞}%%%%%%%%%%%%%%% 謝辞 %%%%%%%
-本研究を進めるにあたり，ご指導くださった山口裕助教授に感謝の意を表します．
+本研究を進めるにあたり，ご指導くださった山口裕助教に感謝の意を表します．
 
 % \begin{thebibliography}{}%%%% 参考文献 %%%
 %   \bibitem{}
