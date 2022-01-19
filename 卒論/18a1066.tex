@@ -123,9 +123,10 @@ ImageNetはディープラーニング研究のために無償で利用できる
 Kaggleは世界規模のデータサイエンスのプラットフォームであり，世界中のデータサイエンティストが技術を競う場である．
 本実験ではKaggleが提供しているNotebookのGPUを利用して学習及び推論を行う．
 \subsection{Plant Pathology 2021 - FGVC8}
-本実験ではKaggle上で提供されているデータセットのPlant Pathology2021を用いる．
-このデータセットの構成を\tref{tb:dataset}に示す．
-\begin{table}[htbp]
+本実験ではKaggle上で提供されているコンペティションデータセットのPlant Pathology2021を用いる．
+このコンペティションの目的はリンゴの葉の画像から，12の病気を正確に診断することである．
+データセットの構成を\tref{tb:dataset}に，各病名とユニークな値にエンコードしたペアを\tref{tb:labels}に示す．
+\begin{table}[H]
   \caption{データセットの構成}
   \label{tb:dataset}
   \centering\begin{tabular}{c|ccc}\hline
@@ -136,6 +137,27 @@ Kaggleは世界規模のデータサイエンスのプラットフォームで�
     train.csv & image，labelsの2カラムのcsvファイル\\ \hline
   \end{tabular}
 \end{table}
+\begin{table}[H]
+  \caption{病名とユニークな値のペア}
+  \label{tb:labels}
+  \centering\begin{tabular}{c|ccc}\hline
+    ユニークな値 & 病名\\ \hline
+    0 & complex\\ \hline
+    1 & frog\_eye\_leaf\_spot\\ \hline
+    2 & frog\_eye\_leaf\_spot complex\\ \hline
+    3 & healthy\\ \hline
+    4 & powdery\_mildew\\ \hline
+    5 & powdery\_mildew complex\\ \hline
+    6 & rust\\ \hline
+    7 & rust complex\\ \hline
+    8 & rust frog\_eye\_leaf\_spot\\ \hline
+    9 & scab\\ \hline
+    10 & scab frog\_eye\_leaf\_spot\\ \hline
+    11 & scab frog\_eye\_leaf\_spot complex\\ \hline
+  \end{tabular}
+\end{table}
+%画像のラベル十二個を説明する
+
 \section{論文の構成}
 2章では実験に使用するモデルViTのアーキテクチャを数式を用いて説明し，実験の手順や条件について示す．3章では実験結果を図と表を用いて示す．
 4章では3章の結果をもとに議論を行い，理解を深める．5章では今回の実験の総括を行う．
@@ -197,24 +219,39 @@ Accuracyは正解率ともいい，Confusion Matrixを用いて\eref{eq:acc_eq}�
   Accuracy=\frac{TP+TN}{TP+FP+TN+FN}
   \label{eq:acc_eq}
 \end{equation}
-得られる値は0から1で，1に近いほど正例を正しく予測できている．
+予測した値のうち，正しく正例及び負例を予測できた割合を表し，得られる値は0から1をとり，1に近いほど良いスコアである．
 
 \subsection{F1-Score}
-F1-Scoreは，PrecisionとRecallの調和平均で計算される指標であり，Confusion Matrixを用いて\eref{eq:f1_eq}，\eref{eq:f1_eq2}と表せる．
+F1-Scoreは，PrecisionとRecallの調和平均で計算される指標である，PresisionとRecallはConfusion Matrixを用いて\eref{eq:f1_eq}で表せる．
 \begin{equation}
   Presision=\frac{TP}{TP+FP}\ Recall=\frac{TP}{TP+FN}
   \label{eq:f1_eq}
 \end{equation}
+Presisionは正例と予測したもののうち真の値も正例の割合，Recallは真の値が正例のもののうちどの程度を正例の予測として含めることができているかの割合である．
+また，これらはトレードオフの関係になっており，どちらかの値を高くしようとするともう一方の値は低くなる．そしてPresisionとRecallのバランスをとった指標がF1-Scoreである．\eref{eq:f1_eq2}に示す．
 \begin{equation}
   F1-Score=\frac{2}{\frac{1}{Recall}+\frac{1}{Presision}}=\frac{2・Recall・Presicion}{Recall・Presicion}=\frac{2TP}{2TP+FP+FN}
   \label{eq:f1_eq2}
 \end{equation}
+また，F1-Scoreは二値分類における評価指標であり，他クラス分類に拡張したものに，mean-F1，macro-F1，micro-F1がある．本実験ではmacro-F1 Scoreを用いる．
+macro-F1 ScoreはラベルごとにF1-Scoreを求め，それらの平均値を評価のスコアとする．
 
 \subsection{Cross Entropy Loss}
-Cross Entropy Lossの算出式は\eref{eq:loss_eq}で示される．
+Cross Entropy Lossの算出式は\eref{eq:loss_eq}で示される．%\sum_{n = 1}^{\infty}
 \begin{equation}
-  Loss(x,class)=-\rm{log}\Biggl(\frac{\exp(\textit{x}[\textit{class}])}{\sum_{\textit{j}}\rm{exp}(\textit{x}[\textit{j}])}\Biggr)=-\textit{x}[\textit{class}]+log\Biggl(\sum_{\textit{j}}exp(\textit{x}[\textit{j}])\Biggr)
+  Loss(x,class)=-\rm{log}\Biggl(\frac{\exp(\textit{x}[\textit{class}])}{\sum_{\textit{j}=0}^{\textit{n}-1}\rm{exp}(\textit{x}[\textit{j}])}\Biggr)=-\textit{x}[\textit{class}]+log\Biggl(\sum_{\textit{j}=0}^{\textit{n}-1}exp(\textit{x}[\textit{j}])\Biggr)
   \label{eq:loss_eq}
+\end{equation}
+ここで，\textit{x}はモデルからの出力（予測），\textit{class}は正解ラベル，\textit{n}はクラス数を示す．
+例えば，$x=[-1.6059,-0.1475,-0.3950,-0.8846]$，$class=1$，クラス数を$\textit{n}=4$とする．この場合のCross Entropy Lossは\eref{eq:loss_eq2}のように算出される．
+\begin{equation}
+  \begin{split}
+    Loss&=-\textit{x}[\textit{class}]+\rm{log}\Biggl(\sum_{\textit{j}=0}^{\textit{n}-1}exp(\textit{x}[\textit{j}])\Biggr)\\
+    &=-x[1]+\rm{log}\Bigl(\rm{exp}(x[0])+\rm{exp}(x[1])+\rm{exp}(x[2])+\rm{exp}(x[3])\Bigr)\\
+    &=0.1475+\rm{log}(2.1501)\\
+    &=0.9130\\
+  \end{split}
+  \label{eq:loss_eq2}
 \end{equation}
 
 \section{手順}
@@ -302,6 +339,10 @@ Cross Entropy Lossの算出式は\eref{eq:loss_eq}で示される．
     criterion & Cross Entropy Loss & Cross Entropy Loss & Cross Entropy Loss\\\hline
   \end{tabular}
 \end{table}
+
+\section{使用するOptimizer}
+\subsection{Adam}
+\subsection{SGD}
 
 \chapter{実験結果}
 
