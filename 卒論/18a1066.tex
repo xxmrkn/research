@@ -180,26 +180,42 @@ Attentionの算出過程を\fref{fig:attention}に示す．
   \label{fig:attention}
 \end{figure}
 
-\section{モデルのパラメータ}
-本実験で使用した各モデルのパラメータ及び設定を\tref{tb:param}に示す．
-\begin{table}[htbp]
-  \caption{各モデルのパラメータ及び設定}
-  \label{tb:param}
-  \centering\begin{tabular}{c|ccc}\hline
-    \backslashbox{指標}{モデル} & vit\_base\_patch\_224 & resnet18d & vgg11\\\hline
-    best valid accuracy & 0.5906 & 0.8209 & 0.8384\\\hline
-    best valid f1-Score & 0.4453 & 0.6283 &0.6349\\\hline
-    best valid loss & 1.1983 & 0.5554 &0.5132\\\hline
-  \end{tabular}
-\end{table}
-
 \section{評価指標}
+本実験で使用するモデルの評価指標とその説明を以下に示す．
+\subsection{Confusuion Matrix}
+Confusuion Matrixは二値分類の正解及び不正解の種類を示す表のことであり，以下の4つの要素で構成されている．
+\begin{enumerate}
+  \item True Positive（TP） : 真陽性．正しく正例と判断．
+  \item False Positive （FP）: 偽陽性．誤って正例と判断．
+  \item True Negative （TN）: 真陰性．正しく負例と判断．
+  \item False Negative （FN）: 偽陰性．誤って負例と判断．
+\end{enumerate}
+
 \subsection{Accuracy}
-Accuracyとは
+Accuracyは正解率ともいい，Confusion Matrixを用いて\eref{eq:acc_eq}と表せる．
+\begin{equation}
+  Accuracy=\frac{TP+TN}{TP+FP+TN+FN}
+  \label{eq:acc_eq}
+\end{equation}
+得られる値は0から1で，1に近いほど正例を正しく予測できている．
+
 \subsection{F1-Score}
-F1-Scoreとは
+F1-Scoreは，PrecisionとRecallの調和平均で計算される指標であり，Confusion Matrixを用いて\eref{eq:f1_eq}，\eref{eq:f1_eq2}と表せる．
+\begin{equation}
+  Presision=\frac{TP}{TP+FP}\ Recall=\frac{TP}{TP+FN}
+  \label{eq:f1_eq}
+\end{equation}
+\begin{equation}
+  F1-Score=\frac{2}{\frac{1}{Recall}+\frac{1}{Presision}}=\frac{2・Recall・Presicion}{Recall・Presicion}=\frac{2TP}{2TP+FP+FN}
+  \label{eq:f1_eq2}
+\end{equation}
+
 \subsection{Cross Entropy Loss}
-Cross Entropy Lossとは
+Cross Entropy Lossの算出式は\eref{eq:loss_eq}で示される．
+\begin{equation}
+  Loss(x,class)=-\rm{log}\Biggl(\frac{\exp(\textit{x}[\textit{class}])}{\sum_{\textit{j}}\rm{exp}(\textit{x}[\textit{j}])}\Biggr)=-\textit{x}[\textit{class}]+log\Biggl(\sum_{\textit{j}}exp(\textit{x}[\textit{j}])\Biggr)
+  \label{eq:loss_eq}
+\end{equation}
 
 \section{手順}
 実験の条件を\tref{tb:conditions}に示す．
@@ -270,7 +286,22 @@ Cross Entropy Lossとは
   \item 条件4では，ViTのみで実験を行う．先に述べた通り，ViTは事前学習の規模が大きいほど各画像認識のベンチマークで良い認識結果が得られている．そこで，条件3までで事前学習に使用してきたデータセットのILSVRC-2012 ImageNetに加え，
   より規模の大きいImageNet-21kを使用する．これにより各指標がこれまでよりいい結果を示すと予想される．
 \end{enumerate}
-
+\subsection{モデルのパラメータ}
+本実験で使用した各モデルのパラメータ及び設定を\tref{tb:param}に示す．
+\begin{table}[htbp]
+  \caption{各モデルのパラメータ及び設定}
+  \label{tb:param}
+  \centering\begin{tabular}{c|ccc}\hline
+    \backslashbox{設定}{モデル} & vit\_base\_patch\_224 & resnet18d & vgg11\\\hline
+    image size & 224x224 & 224x224 & 224x224\\\hline
+    batch size & 32 & 32 & 32\\\hline
+    debug size & 0.2 & 0.2 &0.2\\\hline
+    epoch & 10 & 10 & 10\\\hline
+    learning rate & 1e-4 & 1e-4 &1e-4\\\hline
+    optimizer & Adam（条件4のみSGD） & Adam & Adam\\\hline
+    criterion & Cross Entropy Loss & Cross Entropy Loss & Cross Entropy Loss\\\hline
+  \end{tabular}
+\end{table}
 
 \chapter{実験結果}
 
