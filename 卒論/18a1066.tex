@@ -102,17 +102,17 @@ Vision Transformerのアーキテクチャを\fref{fig:vit_arch}に示す．
   \label{fig:vit_arch}
 \end{figure}
 \section{使用ツール・実験環境}
-\subsection{Python}
+\subsection{Python\cite{pythondoc}}
 Pythonは1990年代の始め，オランダにあるStichting Mathematisch CentrumでGuido van RossumによってABCと呼ばれる言語の後継言語として生み出された．
 Pythonはコードを簡潔に書くことができ，数値計算のNumPy，データ解析のPandasなど，専門的なライブラリが充実していることから，機械学習の研究開発をはじめとしたさまざまな分野で使用されている言語である．
 簡単にPythonを始めるディストリビューションとしてAnacondaがよく使われる．また，本実験で使用したバージョンは3.7.10である．
-\subsection{PyTorch}
+\subsection{PyTorch\cite{Eli_Stevens2021-01-30}}
 PyTorchはディープラーニング・プロジェクトの構築を容易にする，Pythonのライブラリである．柔軟性を重視した設計であり，さらに，ディープラーニングモデルをPythonの慣用的なクラスや関数の取り扱い方
 で実装できるようになっている．本実験で使用したバージョンは1.9.1である．
-\subsection{Pytorch Image models}
+\subsection{Pytorch Image models\cite{timmdoc}}
 Pytorch Image Models（timm）はRoss Wightmanによって作成されたディープラーニングライブラリであり，コンピュータビジョンの最先端のモデルが集められている．
 数行の記述でモデルを呼び出すことができ，必要に応じて書き換えることで，さまざまなタスクに適用できる．本実験で使用したバージョンは0.5.2である．
-\subsection{Albumentations}
+\subsection{Albumentations\cite{info11020125}}
 AlbumentationsはPythonのためのデータ拡張のライブラリである．
 モデルの汎化性能を上げるために行うデータ拡張のメソッドを多数揃えており，パイプラインを構成するとデータを効率的に拡張できる．本実験で使用したバージョンは1.1.0である．
 \subsection{ImageNet}
@@ -221,7 +221,7 @@ Accuracyは正解率ともいい，Confusion Matrixを用いて\eref{eq:acc_eq}�
 \end{equation}
 予測した値のうち，正しく正例及び負例を予測できた割合を表し，得られる値は0から1をとり，1に近いほど良いスコアである．
 
-\subsection{F1-Score}
+\subsection{F1-Score\cite{門脇大輔2019-10-09}}
 F1-Scoreは，PrecisionとRecallの調和平均で計算される指標である，PresisionとRecallはConfusion Matrixを用いて\eref{eq:f1_eq}で表せる．
 \begin{equation}
   Presision=\frac{TP}{TP+FP}\ Recall=\frac{TP}{TP+FN}
@@ -236,14 +236,14 @@ Presisionは正例と予測したもののうち真の値も正例の割合，Re
 また，F1-Scoreは二値分類における評価指標であり，他クラス分類に拡張したものに，mean-F1，macro-F1，micro-F1がある．本実験ではmacro-F1 Scoreを用いる．
 macro-F1 ScoreはラベルごとにF1-Scoreを求め，それらの平均値を評価のスコアとする．
 
-\subsection{Cross Entropy Loss}
+\subsection{Cross Entropy Loss\cite{torchdoc}}
 Cross Entropy Lossの算出式は\eref{eq:loss_eq}で示される．%\sum_{n = 1}^{\infty}
 \begin{equation}
   Loss(x,class)=-\rm{log}\Biggl(\frac{\exp(\textit{x}[\textit{class}])}{\sum_{\textit{j}=0}^{\textit{n}-1}\rm{exp}(\textit{x}[\textit{j}])}\Biggr)=-\textit{x}[\textit{class}]+log\Biggl(\sum_{\textit{j}=0}^{\textit{n}-1}exp(\textit{x}[\textit{j}])\Biggr)
   \label{eq:loss_eq}
 \end{equation}
 ここで，\textit{x}はモデルからの出力（予測），\textit{class}は正解ラベル，\textit{n}はクラス数を示す．
-例えば，$x=[-1.6059,-0.1475,-0.3950,-0.8846]$，$class=1$，クラス数を$\textit{n}=4$とする．この場合のCross Entropy Lossは\eref{eq:loss_eq2}のように算出される．
+例えば，$x=[-1.6059,-0.1475,-0.3950,-0.8846]$，$class=1$，$\textit{n}=4$とする．この場合のCross Entropy Lossは\eref{eq:loss_eq2}のように算出される．
 \begin{equation}
   \begin{split}
     Loss&=-\textit{x}[\textit{class}]+\rm{log}\Biggl(\sum_{\textit{j}=0}^{\textit{n}-1}exp(\textit{x}[\textit{j}])\Biggr)\\
@@ -340,9 +340,9 @@ Cross Entropy Lossの算出式は\eref{eq:loss_eq}で示される．%\sum_{n = 1
   \end{tabular}
 \end{table}
 
-\section{使用するOptimizer}
-\subsection{Adam}
-\subsection{SGD}
+\subsection{Optimizer Adam\cite{斎藤康毅2016-09-24}}
+
+\subsection{Optimizer SGD\cite{斎藤康毅2016-09-24}}
 
 \chapter{実験結果}
 
