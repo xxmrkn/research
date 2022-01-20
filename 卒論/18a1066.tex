@@ -340,9 +340,18 @@ Cross Entropy Lossの算出式は\eref{eq:loss_eq}で示される．%\sum_{n = 1
   \end{tabular}
 \end{table}
 
-\subsection{Optimizer Adam\cite{斎藤康毅2016-09-24}}
-
 \subsection{Optimizer SGD\cite{斎藤康毅2016-09-24}}
+SGD（Stochastic Gradient Decent : 確率的勾配降下法）代表的な最適化手法の一つで，求めた勾配方向にパラメータを更新する手法である．
+パラメータの更新式を\eref{eq:sgd_eq}に示す．
+\begin{equation}
+  W\leftarrow W - \eta\frac{\partial L}{\partial W}
+  \label{eq:sgd_eq}
+\end{equation}
+ここで，\textit{W}は更新する重みパラメータを表し，$\frac{\partial L}{\partial W}$は\textit{W}に関する損失関数\textit{L}の勾配である．
+また，$\eta$は学習率であり，本実験では1e-4とした．
+
+\subsection{Optimizer Adam}
+Adamは，パラメータの要素ごとに適応的に学習率を調整しながら学習を行うAdaGrad\cite{斎藤康毅2016-09-24}と，過去の勾配を徐々に忘れて新しく求めた勾配を大きく反映させるRMSPropを組み合わせた手法である\cite{kingma2017adam}．
 
 \chapter{実験結果}
 
