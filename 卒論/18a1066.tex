@@ -38,7 +38,7 @@
 画像認識分野では，畳み込み層を重ねることで良い認識結果をもたらしたVGGをはじめ，残差機構を取り入れ，更に層を深くすることを可能にしたResNetがState-of-the-artを達成し，デファクトスタンダードとなっていた．
 しかし，今回のテーマであるVision Transformerは畳み込み層を使っておらず，Attention層を用いて代用している．
 また，Vision Transformerでの大規模なデータセットを用いた事前学習は，認識結果に影響し，ImageNet ReaL，CIFAR-100，VTABなどの画像認識のベンチマークでState-of-the-artを達成し，更新した．
-そこで本実験では，Vision Transformerを用いて，各自で用意したデータセットに対して事前学習をおこなった場合とそうでない場合，事前学習のデータセット規模を変えた場合で認識結果を向上させることができるのか検証した．
+そこで本研究では，Vision Transformerを用いて，各自で用意したデータセットに対して事前学習をおこなった場合とそうでない場合，事前学習のデータセット規模を変えた場合で認識結果を向上させることができるのか検証した．
 
 \end{abstract}
 
@@ -83,15 +83,48 @@ ResNetのブロックの一部を\fref{fig:res_arch}に示す．入力を$x$と�
   \label{fig:res_arch}
 \end{figure}
 \subsection{Transformer}
+\label{sec:attention}
 Transformerは，それまで機械翻訳モデルで多く使われてきた畳み込みニューラルネットワーク・再帰ニューラルネットワークのような複雑なアーキテクチャを持つネットワークとは違い
 Attention機構のみを用いて構成されているエンコーダ・デコーダモデルである\cite{vaswani2017attention}．
 Transformerのアーキテクチャを\fref{fig:tr_arch}に示す．
 
 Attention機構から求まるAttentionスコアは，文章中の単語間の関連度のようなもので，ある単語を理解するのに，どの単語に注目すれば良いかを定量的に示すことができる．
-Attentionスコアを求める例として，「I like an apple, it is tasty.」という文章を考える．
-初めに，文字列「I like an apple, it is tasty.」を入力とする．入力は単語ごとにベクトルに埋め込まれ今回は$x_{1},...,x_{9}$と表す．
-$x_{1},...,x_{9}, d_{x}=512$はそれぞれ訓練過程で学習された重み行列$W_{Q},W_{K},W_{V}, W_{Q}\in \mathbb{R}, W_{K}\in \mathbb{R},  W_{V}\in \mathbb{R}$と掛け合わせ，それぞれ$q_{1},...,q_{9}, k_{1},...,k_{9}, v_{1},...,v_{9}$とする．
-また，
+また，今回扱う一つの文章中の単語のみで求めるAttentionはSelf-Attentionと呼ばれる．以降，AttentionはSelf-Attentionを示す．
+
+Attentionを求める例として，「I like an apple, it is tasty.」という文章を考える．
+初めに，文字列「I like an apple, it is tasty.」を入力とする．入力は単語ごとにベクトルに埋め込まれ$x_{1},...,x_{7}$と表し，次元は$d_{model}$で，論文\cite{vaswani2017attention}より512である．
+また，今回は簡単のためにカンマとピリオドは省略している．
+$x_{1},...,x_{7}$はそれぞれ訓練過程で学習された重み行列$W_{Q},W_{K},W_{V}$と掛け合わせ，それぞれ$q_{1},...,q_{7}, k_{1},...,k_{7}, v_{1},...,v_{7}$とする．
+また，$d_{k}=d_{q}=d_{v}=64, W_{Q}\in \mathbb{R}^{d_{model}\times d_{k}}, W_{K}\in \mathbb{R}^{d_{model}\times d_{k}},  W_{V}\in \mathbb{R}^{d_{model}\times d_{v}}$である．
+今回は，「it」に対してのAttentionを求める．「it」は先頭から5文字目なので，生成されたベクトル$q_{5}, k_{5}, v_{5}$に対応する．
+次に，$q_{5}$と文中全ての単語の$k_{1},...,k_{7}$との要素積を求める．ここでのベクトルに対する値は目的の結果が得られるように調整してある．\eref{eq:sa1}に示す．
+\begin{equation}
+  \begin{split}
+    q_{5}\cdot k_{1} &=20,\ q_{5}\cdot k_{2}=30,\ q_{5}\cdot k_{3}=10,\ q_{5}\cdot k_{4}=140,\\
+    q_{5}\cdot k_{5} &=100,\ q_{5}\cdot k_{6}=30,\ q_{5}\cdot k_{7}=40\\
+  \end{split}
+  \label{eq:sa1}
+\end{equation}
+\eref{eq:sa1}により求まった結果を$\sqrt{d_{k}}=\sqrt{64}=8$で割る．\eref{eq:sa2}に示す．これは，要素積が非常に大きくなった場合に対処するためである．
+\begin{equation}
+  \begin{split}
+    \frac{q_{5}\cdot k_{1}}{\sqrt{d_{k}}} &=2.5,\ \frac{q_{5}\cdot k_{2}}{\sqrt{d_{k}}}=3.75,\ \frac{q_{5}\cdot k_{3}}{\sqrt{d_{k}}}=1.25,\ \frac{q_{5}\cdot k_{4}}{\sqrt{d_{k}}}=17.5,\\
+    \frac{q_{5}\cdot k_{5}}{\sqrt{d_{k}}} &=12.5,\ \frac{q_{5}\cdot k_{6}}{\sqrt{d_{k}}}=3.75,\ \frac{q_{5}\cdot k_{7}}{\sqrt{d_{k}}}=5\\
+  \end{split}
+  \label{eq:sa2}
+\end{equation}
+\eref{eq:sa2}の結果を$softmax$関数を用いて0から1の値に収める．\eref{eq:sa3}に示す．
+\begin{equation}
+  \begin{split}
+    softmax(\frac{q_{5}\cdot k_{1}}{\sqrt{d_{k}}}) &=0.054,\ softmax(\frac{q_{5}\cdot k_{2}}{\sqrt{d_{k}}})=0.081,\ softmax(\frac{q_{5}\cdot k_{3}}{\sqrt{d_{k}}})=0.027,\\
+    softmax(\frac{q_{5}\cdot k_{4}}{\sqrt{d_{k}}})&=0.378,softmax(\frac{q_{5}\cdot k_{5}}{\sqrt{d_{k}}}) =0.270,\ softmax(\frac{q_{5}\cdot k_{6}}{\sqrt{d_{k}}})=0.081,\\
+    softmax(\frac{q_{5}\cdot k_{7}}{\sqrt{d_{k}}})&=0.108\\
+  \end{split}
+  \label{eq:sa3}
+\end{equation}
+\eref{eq:sa3}で求まった値は$v_{1},...,v_{7}$に対する重みであり，それぞれ掛け合わせることで，「it」という単語を理解するのに注目すべき単語には大きな重みがかかり，そうではない単語には小さな重みがかかることになる．
+今回の例では$q_{5}\cdot k_{4}$が0.378で最も大きな値であるので，$k_{4}$を見ると，「apple」であることがわかる．
+つまり，「it」を理解するには「apple」が必要である．英文解釈的にも「it : それ」は「apple : リンゴ」を指すので正しい結果だと言える．
 
 %説明が不足しているので加筆必要, Attentionの定性的な意味とか概要とか．なぜこのような仕組みが発想されたのかとか
 \begin{figure}[H]
@@ -195,13 +228,13 @@ ViTのエンコーダに入力するには，$x_{p}$をさらに埋め込む必�
   \label{eq:network-input4}
 \end{equation}
 ここで，\textit{E}はパッチを\textit{D}次元のベクトルへの埋め込みを示し，$E_{pos}$は各パッチの位置が一意に定まるように情報を付加する位置エンコーディングを表す．
-上式で得られた入力$z_{0}$はMulti-Head Attentionに入力される．Multi-Head Attentionでは，Attentionを求める計算を複数回行う．Attentionの算出式を\eref{eq:network-input5}に示す．
+上式で得られた入力$z_{0}$はMulti-Head Attentionに入力される．Multi-Head Attentionでは，Attentionを求める計算を複数回行う．具体的な算出については\ref{sec:attention}に示した．Attentionの算出式を\eref{eq:network-input5}に示す．
 \begin{equation}
   Attention(Q,K,V) = softmax(\frac{QK^{T}}{\sqrt{d_{k}}})V
   \label{eq:network-input5}
 \end{equation}
 初めに，入力ベクトルから\textit{Q，K，V}ベクトルを生成する．このとき，\textit{Q，K}の次元は$d_{k}$で，\textit{V}の次元は$d_{k}$である．
-計算時は，\textit{Q，K}の要素積を$\sqrt{d_{k}}$で除算し，softmax関数で0から1の値にする．最後に\textit{V}をかけるとAttentionスコアが算出できる．
+計算時は，\textit{Q，K}の要素積を$\sqrt{d_{k}}$で除算し，softmax関数で0から1の値にする．最後に\textit{V}をかけるとAttentionが算出できる．
 Attentionの算出過程を\fref{fig:attention}に示す．
 \begin{figure}[h]
   \centering
@@ -543,43 +576,6 @@ Adamは，パラメータの要素ごとに適応的に学習率を調整しな�
 これは画像に対する帰納バイアスを持たないViTに，大量の画像による事前学習を適用したことで，ハンデを克服したと言えるだろう．しかし，ImageNet-21kで事前学習したViTは5Epochを超えたあたりから，validationとの差が広がり，オーバーフィッティングしていることもわかる．
 原因は，大規模なデータセットにる事前学習の重みを適用したものの，本タスクの識別器としてはそれほど上手く機能していないことであろう．そして，この問題を解決するためには，より適切なデータ拡張やパラメータチューニングが必要だと考えられる．
 また，全ての実験の結果から，今回のタスクである「リンゴの葉の病気の診断」は，画像の大域的な構造よりも診断の対照である葉の局所的なテクスチャが特徴として使われることから，CNNが得意とするタスクであり，ViT向きではなかったこともCNNとあまり差が出なかった原因の一つであるだろう．
-先の実験で使用したCNNモデルの一つであるresnet18dをより深くしたモデルresnet50dで，10Epoch学習した結果を\tref{tb:res50}，それに対応するグラフを\fref{fig:res50_fig}に示す．
-\begin{table}[htbp]
-  \caption{resnet50dの実験結果}
-  \label{tb:res50}
-  \centering\begin{tabular}{c|ccc}\hline
-    \backslashbox{指標}{モデル} & resnet18d & resnet50d\\\hline
-    best valid accuracy & 0.8806 & 0.8881\\\hline
-    best valid f1-Score & 0.7199 & 0.7141\\\hline
-    best valid loss & 0.3809 & 0.3626\\\hline
-  \end{tabular}
-\end{table}
-
-\begin{figure}[H]
-  \begin{tabular}{cc}
-    \begin{minipage}[t]{0.45\hsize}
-      \centering
-      \includegraphics[keepaspectratio, scale=0.43]{figs/result1-1.png}
-      \subcaption{Accuracy}
-      %\label{Accuracy}
-    \end{minipage} &
-    \begin{minipage}[t]{0.45\hsize}
-      \centering
-      \includegraphics[keepaspectratio, scale=0.43]{figs/result1-2.png}
-      \subcaption{F1-Score}
-      %\label{F1-Score}
-    \end{minipage} \\
-
-    \begin{minipage}[t]{0.45\hsize}
-      \centering
-      \includegraphics[keepaspectratio, scale=0.43]{figs/result1-3.png}
-      \subcaption{Loss}
-      %\label{Loss}
-    \end{minipage}
-  \end{tabular}
-  \caption{resnet50dの学習結果}
-  \label{fig:res50_fig}
-\end{figure}
 
 \chapter{結論}
 今回の実験で，Vision Transformerに事前学習を適用した時，
