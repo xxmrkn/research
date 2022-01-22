@@ -91,8 +91,8 @@ Transformerのアーキテクチャを\fref{fig:tr_arch}に示す．
 Attention機構から求まるAttentionスコアは，文章中の単語間の関連度のようなもので，ある単語を理解するのに，どの単語に注目すれば良いかを定量的に示すことができる．
 また，今回扱う一つの文章中の単語のみで求めるAttentionはSelf-Attentionと呼ばれる．以降，AttentionはSelf-Attentionを示す．
 
-Attentionを求める例として，「I like an apple, it is tasty.」という文章を考える．
-初めに，文字列「I like an apple, it is tasty.」を入力とする．入力は単語ごとにベクトルに埋め込まれ$x_{1},...,x_{7}$と表し，次元は$d_{model}$で，論文\cite{vaswani2017attention}より512である．
+Attentionを求める例として，「I like an apple, it is delicious.」という文章を考える．
+初めに，文字列「I like an apple, it is delicious.」を入力とする．入力は単語ごとにベクトルに埋め込まれ$x_{1},...,x_{7}$と表し，次元は$d_{model}$で，論文\cite{vaswani2017attention}より512である．
 また，今回は簡単のためにカンマとピリオドは省略している．
 $x_{1},...,x_{7}$はそれぞれ訓練過程で学習された重み行列$W_{Q},W_{K},W_{V}$と掛け合わせ，それぞれ$q_{1},...,q_{7}, k_{1},...,k_{7}, v_{1},...,v_{7}$とする．
 また，$d_{k}=d_{q}=d_{v}=64, W_{Q}\in \mathbb{R}^{d_{model}\times d_{k}}, W_{K}\in \mathbb{R}^{d_{model}\times d_{k}},  W_{V}\in \mathbb{R}^{d_{model}\times d_{v}}$である．
@@ -224,7 +224,7 @@ ViTの入力は画像である．画像サイズを\textit{H}，\textit{W}，チ
 ViTのエンコーダに入力するには，$x_{p}$をさらに埋め込む必要がある．長さ$P^{2}\times C$を\textit{D}次元のベクトルとして，線形投影したものを埋め込みパッチ$z_{0}$とする．
 また，入力データの先頭には[class]トークンを付与し，埋め込みパッチ$z^{0}_{0}=x_{class}とする$．\eref{eq:network-input4}に示す．
 \begin{equation}
-  z_{0}=[x_{class};\ x^{1}_{p}E;\ x^{2}_{p}E;\cdot\cdot\cdot;\ x^{N}_{p}E]+E_{pos},\qquad E\in\mathbb{R}^{(P^{2}\times C)\times D},\ E_{pos}\in\mathbb{R}^{(N+1)\times D}
+  z_{0}=[x_{class};\ x^{1}_{p}E;\ x^{2}_{p}E;...;\ x^{N}_{p}E]+E_{pos},\qquad E\in\mathbb{R}^{(P^{2}\times C)\times D},\ E_{pos}\in\mathbb{R}^{(N+1)\times D}
   \label{eq:network-input4}
 \end{equation}
 ここで，\textit{E}はパッチを\textit{D}次元のベクトルへの埋め込みを示し，$E_{pos}$は各パッチの位置が一意に定まるように情報を付加する位置エンコーディングを表す．
