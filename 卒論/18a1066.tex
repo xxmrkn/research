@@ -73,13 +73,13 @@ VGGはCNNの一種で，3x3という小さいカーネルを用いており，20
 
 \subsection{ResNet}
 一般的に，CNNでは層を重ねることで，より高次元な特徴を抽出することができるが，層が深くなるにつれて勾配が発散・消失するという問題があった．
-しかし，ResNetは，畳み込み層を重ねるだけではなく，前の層，もしくはより浅い層の出力を次の層の入力とする残差機構（スキップ接続）を取り入れることで，より畳み込み層を多く積み重ねながらも，SoTAを達成した\cite{he2015deep}．
+しかし，ResNetは，畳み込み層を重ねるだけではなく，浅い層の出力を次の層の入力とする残差機構（スキップ接続）を取り入れることで，より畳み込み層を多く積み重ねながらも，SoTAを達成した\cite{he2015deep}．
 ResNetのブロックの一部を\fref{fig:res_arch}に示す．入力を$x$とし，2層のweight layer(畳み込み層)を$f(x)$とする．入力$x$はweight layerと活性化関数ReLUを経由し，$f(x)$として出力される．
 そしてスキップ接続の$x$を加算し，最終的な出力は$f(x)+x$である．
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\linewidth]{figs/resnet.png}
-  \caption{Residual learning\cite{he2015deep}}
+  \caption{ResNetのアーキテクチャ（一部）\cite{he2015deep}}
   \label{fig:res_arch}
 \end{figure}
 \subsection{Transformer}
@@ -88,14 +88,15 @@ Transformerは，それまで機械翻訳モデルで多く使われてきた畳
 Attention機構のみを用いて構成されているエンコーダ・デコーダモデルである\cite{vaswani2017attention}．
 Transformerのアーキテクチャを\fref{fig:tr_arch}に示す．
 
-Attention機構から求まるAttentionスコアは，文章中の単語間の関連度のようなもので，ある単語を理解するのに，どの単語に注目すれば良いかを定量的に示すことができる．
-また，今回扱う一つの文章中の単語のみで求めるAttentionはSelf-Attentionと呼ばれる．以降，AttentionはSelf-Attentionを示す．
+Attention機構から求まるAttentionは，文章中の単語間の関連度のようなもので，ある単語を理解するのに，どの単語に注目すれば良いかを定量的に示すことができる．
+また，一つの文章中の単語のみで求めるAttentionはSelf-Attentionと呼び，以降，AttentionはSelf-Attentionを指す．
+%また，今回扱う一つの文章中の単語のみで求めるAttentionはSelf-Attentionと呼ばれる．以降，AttentionはSelf-Attentionを示す．
 
 Attentionを求める例として，「I like an apple, it is delicious.」という文章を考える．
 初めに，文字列「I like an apple, it is delicious.」を入力とする．入力は単語ごとにベクトルに埋め込まれ$x_{1},...,x_{7}$と表し，次元は$d_{model}$で，論文\cite{vaswani2017attention}より512である．
 また，今回は簡単のためにカンマとピリオドは省略している．
 $x_{1},...,x_{7}$はそれぞれ訓練過程で学習された重み行列$W_{Q},W_{K},W_{V}$と掛け合わせ，それぞれ$q_{1},...,q_{7}, k_{1},...,k_{7}, v_{1},...,v_{7}$とする．
-また，$d_{k}=d_{q}=d_{v}=64, W_{Q}\in \mathbb{R}^{d_{model}\times d_{k}}, W_{K}\in \mathbb{R}^{d_{model}\times d_{k}},  W_{V}\in \mathbb{R}^{d_{model}\times d_{v}}$である．
+また，$d_{q}=d_{k}=d_{v}=64,\ W_{Q}\in \mathbb{R}^{d_{model}\times d_{k}}, W_{K}\in \mathbb{R}^{d_{model}\times d_{k}},  W_{V}\in \mathbb{R}^{d_{model}\times d_{v}}$である．
 今回は，「it」に対してのAttentionを求める．「it」は先頭から5文字目なので，生成されたベクトル$q_{5}, k_{5}, v_{5}$に対応する．
 次に，$q_{5}$と文中全ての単語の$k_{1},...,k_{7}$との要素積を求める．ここでのベクトルに対する値は目的の結果が得られるように調整してある．\eref{eq:sa1}に示す．
 \begin{equation}
@@ -113,13 +114,14 @@ $x_{1},...,x_{7}$はそれぞれ訓練過程で学習された重み行列$W_{Q}
   \end{split}
   \label{eq:sa2}
 \end{equation}
-\eref{eq:sa2}の結果を$softmax$関数を用いて0から1の値に収める．\eref{eq:sa3}に示す．
+\eref{eq:sa2}の結果を$softmax$関数を用いて0から1の値に収め，総和が1になるようにする．\eref{eq:sa3}に示す．
 \begin{equation}
-  \begin{split}
-    softmax(\frac{q_{5}\cdot k_{1}}{\sqrt{d_{k}}}) &=0.054,\ softmax(\frac{q_{5}\cdot k_{2}}{\sqrt{d_{k}}})=0.081,\ softmax(\frac{q_{5}\cdot k_{3}}{\sqrt{d_{k}}})=0.027,\\
-    softmax(\frac{q_{5}\cdot k_{4}}{\sqrt{d_{k}}})&=0.378,softmax(\frac{q_{5}\cdot k_{5}}{\sqrt{d_{k}}}) =0.270,\ softmax(\frac{q_{5}\cdot k_{6}}{\sqrt{d_{k}}})=0.081,\\
-    softmax(\frac{q_{5}\cdot k_{7}}{\sqrt{d_{k}}})&=0.108\\
-  \end{split}
+  softmax\bigr([\frac{q_{5}\cdot k_{1,...,7}}{\sqrt{d_{k}}}]\bigr) = [0.054,0.081,0.027,0378,0.270,0.081,0.108]
+  %\begin{split}
+  % softmax(\frac{q_{5}\cdot k_{1}}{\sqrt{d_{k}}}) &=0.054,\ softmax(\frac{q_{5}\cdot k_{2}}{\sqrt{d_{k}}})=0.081,\ softmax(\frac{q_{5}\cdot k_{3}}{\sqrt{d_{k}}})=0.027,\\
+  % softmax(\frac{q_{5}\cdot k_{4}}{\sqrt{d_{k}}})&=0.378,softmax(\frac{q_{5}\cdot k_{5}}{\sqrt{d_{k}}}) =0.270,\ softmax(\frac{q_{5}\cdot k_{6}}{\sqrt{d_{k}}})=0.081,\\
+  % softmax(\frac{q_{5}\cdot k_{7}}{\sqrt{d_{k}}})&=0.108\\
+  %\end{split}
   \label{eq:sa3}
 \end{equation}
 \eref{eq:sa3}で求まった値は$v_{1},...,v_{7}$に対する重みであり，それぞれ掛け合わせることで，「it」という単語を理解するのに注目すべき単語には大きな重みがかかり，そうではない単語には小さな重みがかかることになる．
@@ -143,22 +145,22 @@ Vision Transformerのアーキテクチャを\fref{fig:vit_arch}に示す．
   \label{fig:vit_arch}
 \end{figure}
 \section{使用ツール・実験環境}
-\subsection{Python\cite{pythondoc}}
-Pythonは1990年代の始め，オランダにあるStichting Mathematisch CentrumでGuido van RossumによってABCと呼ばれる言語の後継言語として生み出された．
+\subsection{Python}
+Pythonは1990年代の始め，オランダにあるStichting Mathematisch CentrumでGuido van RossumによってABCと呼ばれる言語の後継言語として生み出された\cite{pythondoc}．
 Pythonはコードを簡潔に書くことができ，数値計算のNumPy，データ解析のPandasなど，専門的なライブラリが充実していることから，機械学習の研究開発をはじめとしたさまざまな分野で使用されている言語である．
-簡単にPythonを始めるディストリビューションとしてAnacondaがよく使われる．また，本実験で使用したバージョンは3.7.10である．
-\subsection{PyTorch\cite{Eli_Stevens2021-01-30}}
+簡単にPythonを始めることができるディストリビューションとしてAnacondaがよく使われる．また，本実験で使用したバージョンは3.7.10である．
+\subsection{PyTorch}
 PyTorchはディープラーニング・プロジェクトの構築を容易にする，Pythonのライブラリである．柔軟性を重視した設計であり，さらに，ディープラーニングモデルをPythonの慣用的なクラスや関数の取り扱い方
-で実装できるようになっている．本実験で使用したバージョンは1.9.1である．
-\subsection{Pytorch Image models\cite{timmdoc}}
-Pytorch Image Models（timm）はRoss Wightmanによって作成されたディープラーニングライブラリであり，コンピュータビジョンの最先端のモデルが集められている．
+で実装できるようになっている\cite{Eli_Stevens2021-01-30}．本実験で使用したバージョンは1.9.1である．
+\subsection{Pytorch Image models}
+Pytorch Image Models（timm）はRoss Wightmanによって作成されたディープラーニングライブラリであり，コンピュータビジョンの最先端のモデルが集められている\cite{timmdoc}．
 数行の記述でモデルを呼び出すことができ，必要に応じて書き換えることで，さまざまなタスクに適用できる．本実験で使用したバージョンは0.5.2である．
-\subsection{Albumentations\cite{info11020125}}
+\subsection{Albumentations}
 AlbumentationsはPythonのためのデータ拡張のライブラリである．
-モデルの汎化性能を上げるために行うデータ拡張のメソッドを多数揃えており，パイプラインを構成するとデータを効率的に拡張できる．本実験で使用したバージョンは1.1.0である．
+モデルの汎化性能を上げるために行うデータ拡張のメソッドを多数揃えており，パイプラインを構成するとデータを効率的に拡張できる\cite{info11020125}．本実験で使用したバージョンは1.1.0である．
 \subsection{ImageNet}
 ImageNetはディープラーニング研究のために無償で利用できる大規模なデータセットのことで，モデルの性能を測るためのベンチマークとして使われる．
-本実験ではImageNetの中でも「ILSVRC-2012 ImageNet」を使用する．このデータセットは，1000のクラス，130万枚の画像で構成されている．
+本実験ではImageNetの中でも「ILSVRC-2012 ImageNet」を使用する．このデータセットは，1,000のクラス，130万枚の画像で構成されている．
 また，事前学習の規模によって認識精度が向上するViTの性質を確かめるために，より大規模なデータセットとして，ImageNet-21kを使用した．このデータセットは21,000のクラス及び1,400万枚の画像で構成されている．
 \subsection{Kaggle}
 Kaggleは世界規模のデータサイエンスのプラットフォームであり，世界中のデータサイエンティストが技術を競う場である．
@@ -234,7 +236,7 @@ ViTのエンコーダに入力するには，$x_{p}$をさらに埋め込む必�
   \label{eq:network-input5}
 \end{equation}
 初めに，入力ベクトルから\textit{Q，K，V}ベクトルを生成する．このとき，\textit{Q，K}の次元は$d_{k}$で，\textit{V}の次元は$d_{k}$である．
-計算時は，\textit{Q，K}の要素積を$\sqrt{d_{k}}$で除算し，softmax関数で0から1の値にする．最後に\textit{V}をかけるとAttentionが算出できる．
+計算時は，\textit{Q，K}の要素積を$\sqrt{d_{k}}$で割り，softmax関数で0から1の値に収め，総和を1にする．最後に\textit{V}をかけるとAttentionが算出できる．
 Attentionの算出過程を\fref{fig:attention}に示す．
 \begin{figure}[h]
   \centering
@@ -262,13 +264,13 @@ Accuracyは正解率ともいい，Confusion Matrixを用いて\eref{eq:acc_eq}�
 \end{equation}
 予測した値のうち，正しく正例及び負例を予測できた割合を表し，得られる値は0から1をとり，1に近いほど良いスコアである．
 
-\subsection{F1-Score\cite{門脇大輔2019-10-09}}
+\subsection{F1-Score}
 F1-Scoreは，PrecisionとRecallの調和平均で計算される指標である，PresisionとRecallはConfusion Matrixを用いて\eref{eq:f1_eq}で表せる．
 \begin{equation}
   Presision=\frac{TP}{TP+FP}\ Recall=\frac{TP}{TP+FN}
   \label{eq:f1_eq}
 \end{equation}
-Presisionは正例と予測したもののうち真の値も正例の割合，Recallは真の値が正例のもののうちどの程度を正例の予測として含めることができているかの割合である．
+Presisionは正例と予測したもののうち真の値も正例の割合，Recallは真の値が正例のもののうちどの程度を正例の予測として含めることができているかの割合である\cite{門脇大輔2019-10-09}．
 また，これらはトレードオフの関係になっており，どちらかの値を高くしようとするともう一方の値は低くなる．そしてPresisionとRecallのバランスをとった指標がF1-Scoreである．\eref{eq:f1_eq2}に示す．
 \begin{equation}
   F1-Score=\frac{2}{\frac{1}{Recall}+\frac{1}{Presision}}=\frac{2・Recall・Presicion}{Recall・Presicion}=\frac{2TP}{2TP+FP+FN}
@@ -277,7 +279,7 @@ Presisionは正例と予測したもののうち真の値も正例の割合，Re
 また，F1-Scoreは二値分類における評価指標であり，他クラス分類に拡張したものに，mean-F1，macro-F1，micro-F1がある．本実験ではmacro-F1 Scoreを用いる．
 macro-F1 ScoreはラベルごとにF1-Scoreを求め，それらの平均値を評価のスコアとする．
 
-\subsection{Cross Entropy Loss\cite{torchdoc}}
+\subsection{Cross Entropy Loss \cite{torchdoc}}
 Cross Entropy Lossの算出式は\eref{eq:loss_eq}で示される．%\sum_{n = 1}^{\infty}
 \begin{equation}
   Loss(x,class)=-\rm{log}\Biggl(\frac{\exp(\textit{x}[\textit{class}])}{\sum_{\textit{j}=0}^{\textit{n}-1}\rm{exp}(\textit{x}[\textit{j}])}\Biggr)=-\textit{x}[\textit{class}]+log\Biggl(\sum_{\textit{j}=0}^{\textit{n}-1}exp(\textit{x}[\textit{j}])\Biggr)
@@ -381,8 +383,8 @@ Cross Entropy Lossの算出式は\eref{eq:loss_eq}で示される．%\sum_{n = 1
   \end{tabular}
 \end{table}
 
-\subsection{Optimizer SGD\cite{斎藤康毅2016-09-24}}
-SGD（Stochastic Gradient Decent : 確率的勾配降下法）代表的な最適化手法の一つで，求めた勾配方向にパラメータを更新する手法である．
+\subsection{Optimizer SGD}
+SGD（Stochastic Gradient Decent : 確率的勾配降下法）は代表的な最適化手法の一つで，求めた勾配方向にパラメータを更新する手法である\cite{斎藤康毅2016-09-24}．
 パラメータの更新式を\eref{eq:sgd_eq}に示す．
 \begin{equation}
   W\leftarrow W - \eta\frac{\partial L}{\partial W}
@@ -392,12 +394,13 @@ SGD（Stochastic Gradient Decent : 確率的勾配降下法）代表的な最適
 また，$\eta$は学習率であり，本実験では1e-4とした．
 
 \subsection{Optimizer Adam}
-Adamは，パラメータの要素ごとに適応的に学習率を調整しながら学習を行うAdaGrad\cite{斎藤康毅2016-09-24}と，過去の勾配を徐々に忘れて新しく求めた勾配を大きく反映させるRMSPropを組み合わせた手法である\cite{kingma2017adam}．
+Adamは，パラメータの要素ごとに適応的に学習率を調整しながら学習を行うAdaGrad \cite{斎藤康毅2016-09-24}と，過去の勾配を徐々に忘れて新しく求めた勾配を大きく反映させるRMSPropを組み合わせた手法である\cite{kingma2017adam}．
+また，学習率の初期値は1e-4とした．
 %理論難しい，要相談
 \chapter{実験結果}
 
 条件ごとの実験結果を\tref{tb:result1}，\tref{tb:result2}，\tref{tb:result3}，\tref{tb:result4}に，
-また，それに対応するグラフを\fref{fig:re1}，\fref{fig:re2}，\fref{fig:re3}，\fref{fig:re4}示す．
+また，それに対応するグラフを\fref{fig:re1}，\fref{fig:re2}，\fref{fig:re3}，\fref{fig:re4}に示す．
 \newpage
 \begin{table}[htbp]
   \caption{条件1の実験結果}
@@ -566,22 +569,25 @@ Adamは，パラメータの要素ごとに適応的に学習率を調整しな�
 帰納バイアスとして働いていて，画像認識タスクにおいて優れた性能を発揮するに至っている．このバイアスがないことが，大規模なデータセットでの事前学習がViTに対して有効で，画像認識で良い結果を出す理由の一つである．\\
 %カーネルは画像全体に同じものを適用するため，CNNは移動させたカーネルと画像のスカラ積による局所性と，画像全体に渡る同一カーネルの重みの使用による移動不変性を持つ．
 %移動不変性：局所的なパターンが画像内の物体位置にかかわらず、出力に対して効果的であること．局所性：近傍における局所的な演算処理
+
 条件2の実験結果からは，事前学習をおこなった場合のViTは他2モデルより，劣っていることがわかる．また，3モデルともAccuracy・F1-Scoreはtrainingの値のみが上がり続け，Lossは限りなく0に近づいている．
 そして，validationの値は横ばいになっていることがわかる．これは，モデルが訓練データに対してオーバーフィッティングし，検証データに対する予測が上手くいっていないことが原因である．
 このことから次の検証では，検証データに対して汎化性能を上げるために，入力画像を加工するデータ拡張を行った．\\
-条件3の実験結果では，データ拡張をおこなった場合のViTの各指標は，training・validation共に近い値をとっており，条件2のオーバーフィッティングを解消できている．
+
+条件3の実験結果では，データ拡張をおこなった場合のモデルの各指標は，training・validation共に近い値をとっており，条件2のオーバーフィッティングを解消できている．
 その上，各指標の値もそれぞれ向上しており，特にViTは大きく伸びている．\\
+
 最後にViTのみで実験を行った条件4での結果を確認する．これまでの条件と違う点は，事前学習に用いたデータセットの規模で，今までのクラス1,000，画像枚数130万枚のILSVRC-2012 ImageNetに加え，
 クラス21,000，画像枚数1,400万枚のImageNet-21kを使用した点である．\fref{fig:re4}からわかるように，ViTは大規模なデータセットで学習した場合に良い認識結果を示している．
 これは画像に対する帰納バイアスを持たないViTに，大量の画像による事前学習を適用したことで，ハンデを克服したと言えるだろう．しかし，ImageNet-21kで事前学習したViTは5Epochを超えたあたりから，validationとの差が広がり，オーバーフィッティングしていることもわかる．
 原因は，大規模なデータセットにる事前学習の重みを適用したものの，本タスクの識別器としてはそれほど上手く機能していないことであろう．そして，この問題を解決するためには，より適切なデータ拡張やパラメータチューニングが必要だと考えられる．
-また，全ての実験の結果から，今回のタスクである「リンゴの葉の病気の診断」は，画像の大域的な構造よりも診断の対照である葉の局所的なテクスチャが特徴として使われることから，CNNが得意とするタスクであり，ViT向きではなかったこともCNNとあまり差が出なかった原因の一つであるだろう．
+また，全ての実験の結果から，今回のタスクである「リンゴの葉の病気の診断」は，画像の大域的な構造よりも診断の対照である葉の局所的なテクスチャが特徴として使われることから，CNNが得意とするタスクであり，ViT向きではなかったこともCNNとあまり差が出なかった原因の一つだとわかった．
 
 \chapter{結論}
 今回の実験で，Vision Transformerに事前学習を適用した時，
 自分で選択したデータセットに対して良い認識結果が得られ，事前学習時のデータセットの規模が認識結果に関係していることもわかった．
-また，データ拡張はモデルの過学習を防ぐのに貢献していた．従来のモデルとスコアがあまり変わらないのは，事前学習の画像枚数が論文の 1/230，1/20 で あったからだと考えられる．
-そして，最近の研究では，畳み込み層とAttention層を組み合わせたモデルが，事前学習のデータセットの大小に関わらず， 良い認識結果をもたらすこともわかっている\cite{dai2021coatnet}．
+また，データ拡張はモデルの過学習を防ぐのに貢献していた．従来のモデルとスコアがあまり変わらないのは，事前学習の画像枚数が論文の 1/230，1/20 であったことと，局所的なテクスチャが認識に重要な要素であり，ViT向きのタスクではなかったからだと考えられる．
+そして，最近の研究では，畳み込み層とAttention層を組み合わせたモデルが，事前学習のデータセットの大小に関わらず，良い認識結果をもたらすこともわかっている\cite{dai2021coatnet}．
 このことから，一般的に利用できる規模のデータセットで高い認識精度を得るには，画像認識に特化した局所性を持つ機構である畳み込み層と，
 画像全体を参照しながら学習していくAttention層を適切に組み合わせる必要があると考えられる.
 
