@@ -265,15 +265,15 @@ Accuracyは正解率ともいい，Confusion Matrixを用いて\eref{eq:acc_eq}�
 予測した値のうち，正しく正例及び負例を予測できた割合を表し，得られる値は0から1をとり，1に近いほど良いスコアである．
 
 \subsection{F1-Score}
-F1-Scoreは，PrecisionとRecallの調和平均で計算される指標である，PresisionとRecallはConfusion Matrixを用いて\eref{eq:f1_eq}で表せる．
+F1-Scoreは，PrecisionとRecallの調和平均で計算される指標である，PrecisionとRecallはConfusion Matrixを用いて\eref{eq:f1_eq}で表せる．
 \begin{equation}
-  Presision=\frac{TP}{TP+FP}\ Recall=\frac{TP}{TP+FN}
+  (Precision)=\frac{TP}{TP+FP}\  (Recall)=\frac{TP}{TP+FN}
   \label{eq:f1_eq}
 \end{equation}
-Presisionは正例と予測したもののうち真の値も正例の割合，Recallは真の値が正例のもののうちどの程度を正例の予測として含めることができているかの割合である\cite{門脇大輔2019-10-09}．
+Precisionは正例と予測したもののうち真の値も正例の割合，Recallは真の値が正例のもののうちどの程度を正例の予測として含めることができているかの割合である\cite{門脇大輔2019-10-09}．
 また，これらはトレードオフの関係になっており，どちらかの値を高くしようとするともう一方の値は低くなる．そしてPresisionとRecallのバランスをとった指標がF1-Scoreである．\eref{eq:f1_eq2}に示す．
 \begin{equation}
-  F1-Score=\frac{2}{\frac{1}{Recall}+\frac{1}{Presision}}=\frac{2・Recall・Presicion}{Recall・Presicion}=\frac{2TP}{2TP+FP+FN}
+  (F1\mathchar`-Score)=\frac{2}{\frac{1}{Recall}+\frac{1}{Precision}}=\frac{2・Recall・Precision}{Recall・Precision}=\frac{2TP}{2TP+FP+FN}
   \label{eq:f1_eq2}
 \end{equation}
 また，F1-Scoreは二値分類における評価指標であり，他クラス分類に拡張したものに，mean-F1，macro-F1，micro-F1がある．本実験ではmacro-F1 Scoreを用いる．
